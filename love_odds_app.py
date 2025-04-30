@@ -48,7 +48,6 @@ your_fitness = st.slider("Your workouts per week", 0, 7, 2)
 your_edu = st.selectbox("Your education", ["High school", "Bachelor's", "Graduate"])
 your_animals = st.radio("Do you love animals?", ["Yes", "No", "Whatever"])
 your_kids = st.radio("Do you have kids?", ["Yes", "No"])
-your_state = st.text_input("Your US State", placeholder="e.g. California")
 your_attractiveness = st.slider("Your attractiveness (1 = troll, 10 = hot hot hot)", 1, 10, 6)
 your_mbti = st.text_input("Your MBTI (optional)", max_chars=4)
 st.markdown("[💡 Explore MBTI types](https://www.16personalities.com/personality-types)")
@@ -103,7 +102,6 @@ def make_user_prompt():
     - Fitness: {your_fitness} workouts/week
     - Loves animals: {your_animals}
     - Has kids: {your_kids}
-    - State: {your_state}
     - Physical attractiveness rating (1 = troll, 10 = hot hot hot): {your_attractiveness}
     - MBTI: {your_mbti or 'Not specified'}
 
