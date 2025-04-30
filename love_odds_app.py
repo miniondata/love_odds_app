@@ -20,7 +20,7 @@ ideal_fitness = st.slider("Workouts per week", 0, 7, 3)
 ideal_edu = st.selectbox("Education level", ["High school", "Bachelor's", "Graduate"])
 ideal_animals = st.radio("Animal lover?", ["Yes", "No", "Whatever"])
 ideal_kids = st.radio("Do they have kids?", ["Yes", "No", "No and don't want kids"])
-ideal_locations = st.text_input("Preferred locations", placeholder="e.g. New York, California")
+ideal_locations = st.text_input("Preferred locations (US only)", placeholder="e.g. New York, California")
 ideal_mbti = st.text_input("MBTI (e.g. ENFP)", max_chars=4)
 st.markdown("[🧠 Not sure about MBTI? Explore types here](https://www.16personalities.com/personality-types)")
 st.markdown("MBTI is made up of 4 elements. For each one, choose one of the two: **(I/E)** Introvert or Extrovert, **(S/N)** Sensing or Intuition, **(T/F)** Thinking or Feeling, **(P/J)** Perceiving or Judging.")
@@ -31,14 +31,15 @@ st.subheader("🪞You (Be honest, we won’t judge 😉)")
 
 your_gender = st.selectbox("What is your gender?", ["Woman", "Man", "Non-binary / Other"])
 your_attraction = st.selectbox("Who are you romantically interested in?", ["Men", "Women", "Everyone"])
-
+your_age = st.number_input("Your age", min_value=18, max_value=100, step=1)
+your_job = st.text_input("Your job or profession")
 your_height = st.text_input("Your height", placeholder="e.g. 5'4 or 6.1")
 your_income = st.text_input("Your income range", placeholder="e.g. $60k to $90k")
 your_fitness = st.slider("Your workouts per week", 0, 7, 2)
 your_edu = st.selectbox("Your education", ["High school", "Bachelor's", "Graduate"])
 your_animals = st.radio("Do you love animals?", ["Yes", "No", "Whatever"])
 your_kids = st.radio("Do you have kids?", ["Yes", "No", "No and don't want kids"])
-your_locations = st.text_input("Your locations", placeholder="e.g. Chicago, Austin")
+your_city = st.text_input("Your city (must be within the US)", placeholder="e.g. Austin")
 your_mbti = st.text_input("Your MBTI", max_chars=4)
 st.markdown("[💡 Explore MBTI types](https://www.16personalities.com/personality-types)")
 st.markdown("MBTI is made up of 4 elements. For each one, choose one of the two: **(I/E)** Introvert or Extrovert, **(S/N)** Sensing or Intuition, **(T/F)** Thinking or Feeling, **(P/J)** Perceiving or Judging.")
@@ -55,7 +56,7 @@ if st.button("💘 Calculate My Love Odds"):
                 model="gpt-3.5-turbo",
                 temperature=0,
                 messages=[
-                    {"role": "system", "content": "You're a brutally honest dating analyst."},
+                    {"role": "system", "content": "You're a brutally honest dating data analyst. You will not flatter the user. Your responses should reflect general dating desirability in the US or relevant regions based on objective traits like height, income, and education."},
                     {"role": "user", "content": prompt}
                 ]
             )
@@ -85,19 +86,21 @@ if st.button("💘 Calculate My Love Odds"):
 
         # --- Prompt: User ---
         user_prompt = f"""
-        Estimate this person's dating percentile in the US.
+        Estimate this person's dating percentile in the US only. Be BRUTAL and strictly logical — do not flatter.
 
         Respond with ONLY a number between 0.1 and 100 — no explanation, no symbols, just the number.
 
         Traits:
         - Gender/Preference: {your_gender}, attracted to {your_attraction}
+        - Age: {your_age}
+        - Job: {your_job}
         - Height: {your_height}
         - Income: {your_income}
         - Fitness: {your_fitness} workouts/week
         - Education: {your_edu}
         - Animal lover: {your_animals}
         - Has kids: {your_kids}
-        - Locations: {your_locations}
+        - City: {your_city} (within the US)
         - MBTI: {your_mbti}
         """
 
@@ -109,18 +112,16 @@ if st.button("💘 Calculate My Love Odds"):
             P = 1 - (1 - ideal_percentile) ** n
             P_percent = round(P * 100, 2)
 
-            # 🎯 Sassy Result Section
+            # 🎯 Results
             st.success("🎯 Results Are In! Let’s see how delulu you are...")
 
             st.markdown(f"**You're in the top {round(user_percentile, 1)}% of daters.**")
             st.markdown(f"**Your ideal partner is in the top {round(ideal_percentile * 100, 2)}% rarity.**")
             st.markdown(f"**Your chance of meeting them in a year: `{P_percent}%`** 🎯")
+
             if P_percent > 0:
                 expected_people = int(1 / ideal_percentile)
-                st.markdown(
-                    f"💡 That means if you ghost roughly **{expected_people}** people this year — "
-                    "one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️"
-                )
+                st.markdown(f"💡 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
 
             # Optimization Tip
             if monthly_meet < 30:
