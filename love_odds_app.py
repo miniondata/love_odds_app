@@ -15,8 +15,8 @@ st.caption("Let’s do the math on your dating standards vs reality. Brutally ho
 # -------------------- Ideal Partner Input --------------------
 st.subheader("✨ Your Ideal Partner")
 
-ideal_height = st.text_input("Height range", placeholder="e.g. 5'10 to 6'3")
-ideal_income = st.text_input("Income range", placeholder="e.g. $100k to $250k")
+ideal_height = st.number_input("Partner height above (in feet)", min_value=5.0, max_value=7.5, value=5.8, step=0.1)
+ideal_income = st.slider("Ideal Partner Income", min_value=20000, max_value=1000000, step=10000, value=100000)
 ideal_fitness = st.slider("Workouts per week", 0, 7, 3)
 ideal_edu = st.selectbox("Education level", ["High school", "Bachelor's", "Graduate"])
 ideal_animals = st.radio("Animal lover?", ["Yes", "No", "Whatever"])
@@ -33,9 +33,9 @@ st.subheader("🪞You (Be honest, we won’t judge 😉)")
 your_gender = st.selectbox("What is your gender?", ["Woman", "Man", "Non-binary / Other"])
 your_attraction = st.selectbox("Who are you romantically interested in?", ["Men", "Women", "Everyone"])
 your_age = st.number_input("Your age", min_value=18, max_value=100, step=1)
-your_job = st.text_input("Your job or profession")
-your_height = st.text_input("Your height", placeholder="e.g. 5'4 or 6.1")
-your_income = st.text_input("Your income range", placeholder="e.g. $60k to $90k")
+your_height_feet = st.number_input("Your height (feet)", min_value=4, max_value=7, step=1, value=5)
+your_height_inches = st.number_input("Your height (inches)", min_value=0, max_value=11, step=1, value=6)
+your_income = st.number_input("Your income (USD per year)", min_value=10000, step=1000, value=60000)
 your_fitness = st.slider("Your workouts per week", 0, 7, 2)
 your_edu = st.selectbox("Your education", ["High school", "Bachelor's", "Graduate"])
 your_animals = st.radio("Do you love animals?", ["Yes", "No", "Whatever"])
@@ -50,73 +50,106 @@ monthly_meet = st.slider("How many people are you willing to meet per month?", 0
 # -------------------- Ranking System --------------------
 def estimate_user_percentile():
     score = 0
-    if your_edu == "Graduate": score += 2
-    elif your_edu == "Bachelor's": score += 1
+    traits = {}
 
-    try:
-        income_val = int(re.sub(r"\D", "", your_income))
-        if income_val >= 150000: score += 3
-        elif income_val >= 100000: score += 2
-        elif income_val >= 60000: score += 1
-    except:
-        income_val = 0
+    # TIER System for Education
+    if your_edu == "Graduate":
+        score += 2
+        traits["education"] = "Graduate"
+    elif your_edu == "Bachelor's":
+        score += 1
+        traits["education"] = "Bachelor's"
+    else:
+        traits["education"] = "High School"
 
-    if your_fitness >= 5: score += 2
-    elif your_fitness >= 2: score += 1
+    # TIER System for Income
+    if your_income >= 150000:
+        score += 3
+        traits["income"] = "Elite"
+    elif your_income >= 100000:
+        score += 2
+        traits["income"] = "High"
+    elif your_income >= 60000:
+        score += 1
+        traits["income"] = "Average"
+    else:
+        traits["income"] = "Low"
 
-    try:
-        height_ft = float(your_height.replace("'", ".").replace("ft", "").strip())
-        if your_gender == "Man":
-            if height_ft >= 6.0: score += 2
-            elif height_ft >= 5.8: score += 1
+    # TIER System for Fitness
+    if your_fitness >= 6:
+        score += 2
+        traits["fitness"] = "Elite"
+    elif your_fitness >= 4:
+        score += 1
+        traits["fitness"] = "High"
+    elif your_fitness >= 2:
+        traits["fitness"] = "Average"
+    else:
+        traits["fitness"] = "Low"
+
+    # TIER System for Height
+    height_in_inches = (your_height_feet * 12) + your_height_inches
+    if your_gender == "Man":
+        if height_in_inches >= 75:  # 6'3"
+            score += 2
+            traits["height"] = "Elite"
+        elif height_in_inches >= 70:  # 5'10"
+            score += 1
+            traits["height"] = "High"
         else:
-            if height_ft >= 5.6: score += 1
-    except:
-        pass
+            traits["height"] = "Average"
+    else:
+        if height_in_inches >= 66:  # 5'6"
+            score += 1
+            traits["height"] = "High"
+        else:
+            traits["height"] = "Average"
 
+    # TIER System for Location
     high_gdp_states = {"California", "Texas", "New York", "Florida", "Illinois"}
-    if your_state.strip() in high_gdp_states: score += 1
+    if your_state.strip() in high_gdp_states:
+        score += 1
+        traits["location"] = "High GDP"
 
+    # TIER System for Attractiveness
+    if your_attractiveness >= 9:
+        score += 2
+        traits["attractiveness"] = "Elite"
+    elif your_attractiveness >= 7:
+        score += 1
+        traits["attractiveness"] = "High"
+    elif your_attractiveness >= 5:
+        traits["attractiveness"] = "Average"
+    else:
+        traits["attractiveness"] = "Low"
+
+    # TIER System for MBTI (E > I for men, T > F for women)
     mbti = your_mbti.upper()
     if len(mbti) == 4:
         if your_gender == "Man":
-            if mbti[0] == "E": score += 1
-            if mbti[2] == "T": score += 1
+            if mbti[0] == "E": 
+                score += 1
+                traits["mbti"] = "E"
+            if mbti[2] == "T": 
+                score += 1
+                traits["mbti"] = "T"
         elif your_gender == "Woman":
-            if mbti[0] == "E": score += 1
-            if mbti[2] == "F": score += 1
+            if mbti[0] == "E": 
+                score += 1
+                traits["mbti"] = "E"
+            if mbti[2] == "F": 
+                score += 1
+                traits["mbti"] = "F"
 
-    score += your_attractiveness - 5
+    # Adjust Score with Noise
     score = max(0, min(score, 15))
-    noise = random.uniform(-1.0, 1.0)
-    percentile = (score / 15 * 100) + noise
-    return round(min(max(percentile, 0.1), 99.9), 1), score, income_val
-
-# -------------------- Glow-up Tip --------------------
-def get_glow_up_tip(score, traits):
-    tips = []
-
-    if traits["fitness"] < 2:
-        tips.append("💪 Try working out 2–3x/week — it's hot *and* boosts confidence.")
-    if traits["income"] < 40000:
-        tips.append("💼 Level up your income game — even a side hustle adds shine.")
-    if traits["education"] == "High school":
-        tips.append("📚 Consider upskilling — a short course could shift the vibe.")
-    if traits["attractiveness"] < 5:
-        tips.append("💅 Confidence makeover? Try a new haircut or glow-up wardrobe.")
-    if traits["mbti"] and traits["mbti"][0] == "I":
-        tips.append("🎤 Channel your inner extrovert — start a convo, say hi more.")
-    if traits["job"].lower() in ["unemployed", "student", "part-time"]:
-        tips.append("🧠 Build prestige — title upgrades impress more than you'd think.")
-
-    if not tips:
-        return "You’re already a star 🌟 Just keep showing up."
-    else:
-        return random.choice(tips)
+    noise = random.uniform(-1.5, 1.5)
+    percentile = 100 - (score / 15 * 100) + noise
+    return round(min(max(percentile, 0.1), 99.9), 1), score, traits
 
 # -------------------- Result --------------------
 if st.button("💘 Calculate My Love Odds"):
-    user_percentile, raw_score, parsed_income = estimate_user_percentile()
+    user_percentile, raw_score, traits = estimate_user_percentile()
 
     final_percentile = round(min(max(user_percentile, 0.1), 99.9), 1)
 
@@ -146,18 +179,6 @@ if st.button("💘 Calculate My Love Odds"):
     st.markdown(f"**{roast}**")
     st.markdown(f"**Your ideal partner is in the top {round(ideal_percentile * 100, 2)}% rarity.**")
     st.markdown(f"**Your chance of meeting them in a year: `{P_percent}%`** 🎯")
-
-    traits = {
-        "fitness": your_fitness,
-        "income": parsed_income,
-        "education": your_edu,
-        "attractiveness": your_attractiveness,
-        "mbti": your_mbti.upper(),
-        "job": your_job
-    }
-
-    glow_up = get_glow_up_tip(raw_score, traits)
-    st.markdown(f"🌟 **Glow-Up Tip:** {glow_up}")
 
     if P_percent > 0:
         expected_people = int(1 / ideal_percentile)
