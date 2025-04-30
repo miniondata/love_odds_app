@@ -169,9 +169,9 @@ if st.button("💘 Calculate My Love Odds"):
     st.markdown(f"**Your chance of meeting them in a year: `{P_adjusted}%`** 🎯")
 
     if P_adjusted > 0:
-        expected_people = int(1 / ideal_percentile)
-        st.markdown(f"💡 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
-
+    expected_people = int(1 / (ideal_percentile * compatibility_factor))
+    st.markdown(f"💡 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
+    
     if P_adjusted < 70:
         if monthly_meet < 50:
             new_meet = min(monthly_meet + 10, 50)
