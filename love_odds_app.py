@@ -169,9 +169,9 @@ if st.button("💘 Calculate My Love Odds"):
     st.markdown(f"**Your chance of meeting them in a year: `{P_adjusted}%`** 🎯")
 
     if P_adjusted > 0:
-        expected_people = int(1 / (ideal_percentile * compatibility_factor))
-        st.markdown(f"👻 That means if you ghost roughly `{expected_people}` people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
-    
+        expected_people = max(1, int(100 / P_adjusted))
+        st.markdown(f"👻 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
+
     # 💘 Final Conclusion
     your_rank = 100 - user_percentile
     partner_rank = 100 - (ideal_percentile * 100)
@@ -203,7 +203,7 @@ if st.button("💘 Calculate My Love Odds"):
             new_meet = yearly_meet + increase_by
             new_n = new_meet
             new_P = 1 - (1 - ideal_percentile) ** new_n
-            new_adjusted = round((new_P * 100) * compatibility_factor, 2)
+            new_adjusted = round((new_P * 100 * true_rank / 100), 2)
             st.markdown(f"🧠 Tip: If you increase your yearly interactions from {yearly_meet} to {new_meet}, your odds could improve to `{new_adjusted:.2f}%`.")
         else:
             st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
