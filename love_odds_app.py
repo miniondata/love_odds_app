@@ -21,6 +21,7 @@ ideal_edu = st.selectbox("Education level", ["High school", "Bachelor's", "Gradu
 ideal_animals = st.radio("Animal lover?", ["Yes", "No", "Whatever"])
 ideal_kids = st.radio("Do they have kids?", ["Yes", "No", "No and don't want kids"])
 ideal_locations = st.text_input("Preferred locations (US only)", placeholder="e.g. New York, California")
+ideal_attractiveness = st.slider("How attractive should they be? (1 = meh, 10 = model)", 1, 10, 7)
 ideal_mbti = st.text_input("MBTI (e.g. ENFP)", max_chars=4)
 st.markdown("[🧠 Not sure about MBTI? Explore types here](https://www.16personalities.com/personality-types)")
 st.markdown("MBTI is made up of 4 elements. For each one, choose one of the two: **(I/E)** Introvert or Extrovert, **(S/N)** Sensing or Intuition, **(T/F)** Thinking or Feeling, **(P/J)** Perceiving or Judging.")
@@ -53,10 +54,13 @@ if st.button("💘 Calculate My Love Odds"):
 
         def get_percentile(prompt):
             response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4-turbo",
                 temperature=0,
                 messages=[
-                    {"role": "system", "content": "You're a brutally honest dating data analyst. You will not flatter the user. Your responses should reflect general dating desirability in the US or relevant regions based on objective traits like height, income, and education."},
+                    {
+                        "role": "system",
+                        "content": "You are a brutally honest, data-driven dating analyst. You are not here to be nice. Rank users strictly based on US dating market value, factoring height, income, fitness, and education. Do NOT overvalue emotional or rare personality traits. Respond only based on real-world attractiveness and desirability statistics in the US."
+                    },
                     {"role": "user", "content": prompt}
                 ]
             )
@@ -82,6 +86,7 @@ if st.button("💘 Calculate My Love Odds"):
         - Has kids: {ideal_kids}
         - Locations: {ideal_locations}
         - MBTI: {ideal_mbti}
+        - Physical attractiveness rating: {ideal_attractiveness}/10
         """
 
         # --- Prompt: User ---
@@ -123,7 +128,6 @@ if st.button("💘 Calculate My Love Odds"):
                 expected_people = int(1 / ideal_percentile)
                 st.markdown(f"💡 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
 
-            # Optimization Tip
             if monthly_meet < 30:
                 new_meet = monthly_meet + 10
                 new_n = new_meet * 12
