@@ -171,21 +171,24 @@ if st.button("💘 Calculate My Love Odds"):
     if P_adjusted > 0:
         expected_people = int(1 / (ideal_percentile * compatibility_factor))
         st.markdown(f"👻 That means if you ghost roughly `{expected_people}` people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
-
-    st.markdown("---")
+    
     # 💘 Final Conclusion
     your_rank = 100 - user_percentile
     partner_rank = 100 - (ideal_percentile * 100)
 
-    if abs(your_rank - partner_rank) <= 15 and P_adjusted >= 20:
+    # 💘 Logic Based on Compatibility and Realism
+    if abs(your_rank - partner_rank) <= 15 and P_adjusted >= 10:
         st.success("💘 Conclusion: You're dreaming at your level. Statistically, this could work 💌")
+    elif your_rank < partner_rank - 25 and P_adjusted < 30:
+        st.warning("😵‍💫 Conclusion: Babe... your standards are giving ✨fictional character✨.")
     elif P_adjusted > 70:
         st.success("💘 Conclusion: You're either a hot commodity or just realistic. Keep going, Cupid!")
     elif P_adjusted > 30:
         st.info("🧐 Conclusion: You're choosy, but not delulu.")
     else:
-        st.warning("😵‍💫 Conclusion: Babe... your standards are giving ✨fictional character✨.")
+        st.warning("📉 Conclusion: You might be trying too hard to outkick your coverage. Try aiming closer to home 💔")
 
+    st.markdown("---")
     # 🧠 THEN Tip logic
     if true_rank >= 90:
         st.markdown("💅 You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
