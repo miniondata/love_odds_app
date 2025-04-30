@@ -175,11 +175,12 @@ if st.button("💘 Calculate My Love Odds"):
         st.markdown(f"🧠 Tip: If you increased your monthly interactions from {monthly_meet} to {new_meet}, your odds could improve to about `{round(new_odds * 100, 2)}%`. Just saying.")
     else:
         st.markdown("🧠 Tip: You’re meeting plenty of people — maybe it's time to expand your type just a little?")
-elif P_percent < 90:
+    elif P_percent < 90:
     weakest = "something you’re not listing"  # 👈 Optional: use scoring breakdown if you want specifics
     st.markdown(f"📈 Tip: You’re close! Just improving one area — maybe {weakest} — could make a difference.")
-else:
+    else:
     st.markdown("💅 Tip: You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
+
 
     st.markdown("---")
     if P_percent > 50:
