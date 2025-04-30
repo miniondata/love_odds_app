@@ -191,9 +191,14 @@ if st.button("💘 Calculate My Love Odds"):
             st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
 
     st.markdown("---")
-    if P_adjusted > 70:
+    # 💘 Final Conclusion
+    ideal_tier = round(ideal_percentile * 100, 1)
+    if abs(true_rank - ideal_tier) <= 20 and P_adjusted >= 20:
+        st.success("💘 Conclusion: You and your ideal match are in the same dating league. This could actually work 💌")
+    elif P_adjusted > 70:
         st.success("💘 Conclusion: You're either a hot commodity or just realistic. Keep going, Cupid!")
     elif P_adjusted > 30:
         st.info("🧐 Conclusion: You're choosy, but not delulu.")
     else:
         st.warning("😵‍💫 Conclusion: Babe... your standards are giving ✨fictional character✨.")
+
