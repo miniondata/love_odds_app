@@ -179,7 +179,7 @@ if st.button("💘 Calculate My Love Odds"):
         weakest = "something you’re not listing"  # 👈 Optional: use scoring breakdown if you want specifics
         st.markdown(f"📈 Tip: You’re close! Just improving one area — maybe {weakest} — could make a difference.")
     else:
-    st.markdown("💅 Tip: You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
+        st.markdown("💅 Tip: You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
 
 
     st.markdown("---")
