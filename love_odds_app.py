@@ -58,9 +58,28 @@ if st.button("💘 Calculate My Love Odds"):
                 messages=[
                     {
                         "role": "system",
-                        "content": "You're a brutally honest, data-driven dating analyst. Your job is to evaluate how objectively datable someone is in the US market based on height, income, education, fitness, job prestige, and physical attractiveness. Do NOT flatter or overvalue rare personality traits. Be realistic, no sugarcoating. This is for statistical accuracy, not feelings."
+                        "content": "You're a brutally honest, emotionally aware dating coach and data analyst. "
+                                    "You evaluate dating profiles using realistic US dating standards: income, height, education, attractiveness, fitness, job prestige, and personality. "
+                                    "You never flatter. You do not overvalue rare traits or soft factors. "
+                                    "Weight the following:\n"
+                                    "- For **men**: height and income matter the most.\n"
+                                    "- For **women**: physical attractiveness and charm matter more.\n"
+                                    "- High GDP states (like CA, NY, TX, FL, IL) give a small boost.\n"
+                                    "- MBTI: extrovert > introvert, T > F for men, F > T for women.\n"
+                                    "You must return ONLY a percentile number between 0.1 and 100. No explanation. No symbols. Just the number."
                     },
-                    {"role": "user", "content": prompt}
+                    {"role": "user", "content":(
+                                f"- Gender: {gender}\n"
+                                f"- Height: {height}\n"
+                                f"- Income: {income}\n"
+                                f"- Education: {education}\n"
+                                f"- Fitness: {fitness} days/week\n"
+                                f"- Job: {job}\n"
+                                f"- Attractiveness (self-rated): {attractiveness}/10\n"
+                                f"- MBTI: {mbti}\n"
+                                f"- State: {state}\n"
+                                f"- Has kids: {kids}"
+                    )
                 ]
             )
             text = response.choices[0].message.content.strip()
@@ -111,6 +130,31 @@ if st.button("💘 Calculate My Love Odds"):
 
         try:
             ideal_percentile = get_percentile(ideal_prompt) / 100
+            user_prompt = f"""
+            Evaluate this person's dating percentile in the US only. Use logic, not vibes.
+
+            Criteria weighting:
+            - For men: height and income matter most
+            - For women: physical attractiveness and social fit matter more
+            - Extroverts > introverts; T > F for men, F > T for women
+            - High-GDP states (e.g. CA, NY, TX, FL) = mild bonus
+            - Fitness, job prestige, and education also count
+            - DO NOT FLATTER OR ROUND UP. Return a harsh but realistic percentile.
+
+            Return ONLY a number between 0.1 and 100. No explanation, no symbols.
+
+            Profile:
+            - Gender: {your_gender}
+            - Height: {your_height}
+            - Income: {your_income}
+            - Education: {your_edu}
+            - Fitness: {your_fitness} workouts/week
+            - Job: {your_job}
+            - Attractiveness (self-rated): {your_attractiveness}/10
+            - MBTI: {your_mbti}
+            - State: {your_city}
+            - Has kids: {your_kids}
+            """
             user_percentile = get_percentile(user_prompt)
 
             n = monthly_meet * 12
