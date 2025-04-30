@@ -172,23 +172,22 @@ if st.button("💘 Calculate My Love Odds"):
         expected_people = int(1 / (ideal_percentile * compatibility_factor))
         st.markdown(f"👻 That means if you ghost roughly `{expected_people}`** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
     
-    if P_adjusted < 50:
+    if true_rank >= 90:
+        st.markdown("💅 Tip: You’re perfect, baby. Manifest harder or raise your standards — you've earned it ✨")
+    elif P_adjusted >= 90:
+        st.markdown("🫣 Tip: The math says yes. The vibes say... swipe wisely.")
+    elif P_adjusted >= 50:
+        weakest = "something you’re not listing"
+        st.markdown(f"📈 Tip: You’re close! Improving just one trait — maybe {weakest} — could push you over the edge.")
+    else:
         if monthly_meet < 50:
             new_meet = min(monthly_meet + 10, 50)
             new_n = new_meet * 12
             new_odds = 1 - (1 - ideal_percentile) ** new_n
             new_adjusted = round((new_odds * 100) * compatibility_factor, 2)
-            st.markdown(f"🧠 Tip: Increase your monthly interactions from {monthly_meet} to {new_meet} and your odds could improve to `{new_adjusted:.2f}%`.")
-        else:
-            st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
-    elif P_adjusted < 90:
-        weakest = "something you’re not listing"
-        st.markdown(f"📈 Tip: You’re close! Improving just one trait — maybe {weakest} — could push you over the edge.")
+        st.markdown(f"🧠 Tip: Increase your monthly interactions from {monthly_meet} to {new_meet} and your odds could improve to `{new_adjusted:.2f}%`.")
     else:
-        if true_rank >= 90:
-            st.markdown("💅 Tip: You’re perfect, baby. Manifest harder or raise your standards — you've earned it ✨")
-        else:
-            st.markdown("🫣 Tip: The math says yes. The vibes say... swipe wisely.")
+        st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
 
     st.markdown("---")
     if P_percent > 50:
