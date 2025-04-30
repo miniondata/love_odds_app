@@ -72,10 +72,12 @@ def get_percentile(prompt):
         messages=[
             {
                 "role": "system",
-                "content": f"You're a brutally honest, emotionally aware dating coach and data analyst. "
-                           f"{profile_context} "
-                           "You analyze data based on the US democracy. "
-                           "You return ONLY a percentile between 0.1 and 100 with no explanation, symbols or extra words."
+                "content": (
+                    f"You're a brutally honest, emotionally aware dating coach and data analyst. "
+                    f"{profile_context} "
+                    "You analyze data based on realistic US dating standards. "
+                    "Return ONLY a percentile score between 0.1 and 100 — no symbols, no extra words."
+                )
             },
             {"role": "user", "content": prompt}
         ]
