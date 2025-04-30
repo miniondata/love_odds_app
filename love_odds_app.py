@@ -147,15 +147,15 @@ if st.button("💘 Calculate My Love Odds"):
     st.markdown(f"**You're in the top {user_percentile}% of daters.**")
     true_rank = round(100 - user_percentile, 1)
     
-    if true_rank <= 10:
+    if true_rank >= 90:
         roast = "🦄 A literal unicorn. They’re not ready for you."
-    elif true_rank <= 30:
+    elif true_rank >= 70:
         roast = "🌟 Main character energy with ick management issues."
-    elif true_rank <= 50:
+    elif true_rank >= 50:
         roast = "🎭 Mid-tier hottie with room for growth."
-    elif true_rank <= 70:
+    elif true_rank >= 30:
         roast = "📉 You’re dating-app purgatory. Swipeable but forgettable."
-    elif true_rank <= 90:
+    elif true_rank >= 10:
         roast = "🙃 You’re someone’s type, but it’s probably not your type."
     else:
         roast = "😬 You’re... brave. Good luck out there."
