@@ -101,7 +101,7 @@ def make_user_prompt():
     - Animal lover: {your_animals}
     - Has kids: {your_kids}
     - State: {your_state}
-    - Attractiveness: {your_attractiveness}/10
+    - Attractiveness: {your_attractiveness}
     - MBTI: {your_mbti}
 
     Respond with a percentile score (0.1–100).
