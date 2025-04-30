@@ -186,8 +186,8 @@ if st.button("💘 Calculate My Love Odds"):
             new_odds = 1 - (1 - ideal_percentile) ** new_n
             new_adjusted = round((new_odds * 100) * compatibility_factor, 2)
         st.markdown(f"🧠 Tip: Increase your monthly interactions from {monthly_meet} to {new_meet} and your odds could improve to `{new_adjusted:.2f}%`.")
-    else:
-        st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
+        else:
+            st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
 
     st.markdown("---")
     if P_percent > 50:
