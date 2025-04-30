@@ -55,6 +55,16 @@ st.markdown("[💡 Explore MBTI types](https://www.16personalities.com/personali
 yearly_meet = st.slider("How many people are you willing to meet per year?", 0, 20, 5)
 
 # -------------------- ChatGPT Scoring --------------------
+def generate_profile_context(your_gender, your_attraction):
+    if your_gender == "Woman" and your_attraction == "Men":
+        return "Evaluate this profile from the perspective of straight men judging a woman. Prioritize attractiveness, fitness, warmth, and lifestyle compatibility."
+    elif your_gender == "Man" and your_attraction == "Women":
+        return "Evaluate this profile from the perspective of straight women judging a man. Prioritize income, height, ambition, emotional maturity, and fitness."
+    else:
+        return "Evaluate this profile neutrally for universal dating desirability, considering common standards like attractiveness, education, fitness, and personality."
+
+profile_context = generate_profile_context(your_gender, your_attraction)
+
 def get_percentile(prompt):
     response = client.chat.completions.create(
         model="gpt-4-turbo",
@@ -62,7 +72,7 @@ def get_percentile(prompt):
         messages=[
             {
                 "role": "system",
-                "content": "You're a brutally honest, emotionally aware dating coach and data analyst. "
+                "content": "You're a brutally honest, emotionally aware dating coach and data analyst. " {profile_context}
                            "You analyze data based on the US democracy. "
                            "You return ONLY a percentile between 0.1 and 100 with no explanation, symbols or extra words."
             },
