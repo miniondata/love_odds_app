@@ -23,10 +23,15 @@ st.caption("Let’s do the math on your dating standards vs reality. Brutally ho
 # -------------------- Ideal Partner Input --------------------
 st.subheader("✨ Your Ideal Partner")
 
-ideal_height_ft = st.selectbox("Partner's height must be above (feet):", list(range(5, 8)), index=2)
-ideal_height_inch = st.selectbox("Partner's height must be above (inches):", list(range(0, 12)), index=8)
+st.markdown("**Partner's height must be at least:**")
+col1, col2 = st.columns(2)
+with col1:
+    ideal_height_ft = st.selectbox("Feet", list(range(4, 8)), index=5, key="ideal_ft")
+with col2:
+    ideal_height_inch = st.selectbox("Inches", list(range(0, 12)), index=6, key="ideal_in")
 
-ideal_income = st.slider("Partner's income must be above (in USD per year):", min_value=20000, max_value=1000000, step=10000, value=100000)
+ideal_income = st.slider("Partner's income must be at least (USD)", 20000, 1000000, 100000, step=10000)
+st.markdown(f"💰 Target partner income: **${ideal_income:,}**")
 
 ideal_fitness = st.slider("Workouts per week", 0, 7, 3)
 ideal_edu = st.selectbox("Education level", ["High school", "Bachelor's", "Graduate"])
@@ -43,13 +48,23 @@ st.subheader("🪞You (Be honest, we won’t judge 😉)")
 your_gender = st.selectbox("What is your gender?", ["Woman", "Man", "Non-binary / Other"])
 your_attraction = st.selectbox("Who are you romantically interested in?", ["Men", "Women", "Everyone"])
 your_age = st.number_input("Your age", min_value=18, max_value=100, step=1)
-your_height_ft = st.selectbox("Your height (feet):", list(range(4, 8)), index=2)
-your_height_inch = st.selectbox("Your height (inches):", list(range(0, 12)), index=6)
-your_income = st.number_input("Your income (USD per year):", min_value=10000, step=1000, value=60000)
+
+st.markdown("**Your height:**")
+col3, col4 = st.columns(2)
+with col3:
+    your_height_ft = st.selectbox("Feet", list(range(4, 8)), index=5, key="you_ft")
+with col4:
+    your_height_inch = st.selectbox("Inches", list(range(0, 12)), index=6, key="you_in")
+
+your_income = st.number_input("Your income (USD per year)", min_value=10000, step=1000, value=60000, format="%d")
+st.markdown(f"💸 Your income: **${your_income:,}**")
+
 your_fitness = st.slider("Your workouts per week", 0, 7, 2)
 your_edu = st.selectbox("Your education", ["High school", "Bachelor's", "Graduate"])
 your_animals = st.radio("Do you love animals?", ["Yes", "No", "Whatever"])
 your_kids = st.radio("Do you have kids?", ["Yes", "No", "No and don't want kids"])
+
+# State list
 us_states = sorted(list(tier_1_states | tier_2_states | {
     "Alaska", "Arkansas", "Connecticut", "Delaware", "Hawaii", "Idaho", "Iowa", "Kansas",
     "Kentucky", "Louisiana", "Maine", "Mississippi", "Montana", "Nebraska", "Nevada",
@@ -57,6 +72,7 @@ us_states = sorted(list(tier_1_states | tier_2_states | {
     "South Dakota", "Utah", "Vermont", "West Virginia", "Wyoming"
 }))
 your_state = st.selectbox("Your state (US only)", us_states)
+
 your_attractiveness = st.slider("How attractive are you? (1 = troll, 10 = hot hot hot)", 1, 10, 6)
 your_mbti = st.text_input("Your MBTI", max_chars=4)
 st.markdown("[💡 Explore MBTI types](https://www.16personalities.com/personality-types)")
@@ -116,8 +132,10 @@ def estimate_user_percentile():
 # -------------------- Final Result --------------------
 if st.button("💘 Calculate My Love Odds"):
     user_percentile, raw_score = estimate_user_percentile()
+
     ideal_score = ideal_fitness + ideal_attractiveness + (2 if ideal_edu == "Graduate" else 1 if ideal_edu == "Bachelor's" else 0)
     ideal_percentile = max(0.001, min(1, 1 - ideal_score / 20))
+
     n = monthly_meet * 12
     P = 1 - (1 - ideal_percentile) ** n
     P_percent = round(P * 100, 2)
