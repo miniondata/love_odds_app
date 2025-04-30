@@ -148,7 +148,7 @@ if st.button("💘 Calculate My Love Odds"):
     true_rank = round(100 - user_percentile, 1)
 
     # Compatibility factor: the better you are, the higher your chances actually are
-    compatibility_factor = 1 - (true_rank / 100)
+    compatibility_factor = true_rank / 100
     P_adjusted = round(P_percent * compatibility_factor, 2)
     
     if true_rank >= 90:
