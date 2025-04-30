@@ -23,23 +23,23 @@ st.caption("Let’s do the math on your dating standards vs reality. Brutally ho
 # -------------------- Ideal Partner Input --------------------
 st.subheader("✨ Your Ideal Partner")
 
-st.markdown("**Partner's height must be at least:**")
+st.markdown("**Partner's height is at least:**")
 col1, col2 = st.columns(2)
 with col1:
-    ideal_height_ft = st.selectbox("Feet", list(range(4, 7)), index=2, key="ideal_ft")
+    ideal_height_ft = st.selectbox("Feet", list(range(4, 8)), index=2, key="ideal_ft")
 with col2:
     ideal_height_inch = st.selectbox("Inches", list(range(0, 12)), index=6, key="ideal_in")
 
-col3, col4 = st.columns([2, 1])
-with col3:
-    ideal_income = st.number_input("Partner's annual income must be at least (USD)", min_value=20000, max_value=1000000, step=10000, value=100000, format="%d")
-with col4:
-    st.markdown(f"**${ideal_income:,}**")
+col1, col2 = st.columns([2, 1])
+with col1:
+    ideal_income = st.number_input("Partner's annual income (USD) is at least", min_value=10000, step=1000, value=60000, format="%d")
+with col2:
+    st.markdown(f"**${your_income:,}**")
 
 ideal_fitness = st.slider("Workouts per week", 0, 7, 3)
 ideal_edu = st.selectbox("Education level", ["High school", "Bachelor's", "Graduate"])
 ideal_animals = st.radio("Animal lover?", ["Yes", "No", "Whatever"])
-ideal_kids = st.radio("Do they have kids?", ["Yes", "No"])
+ideal_kids = st.radio("Do they have kids?", ["Yes", "No", "No and don't want kids"])
 ideal_attractiveness = st.slider("How attractive should they be? (1 = meh, 10 = model)", 1, 10, 7)
 ideal_mbti = st.text_input("MBTI (e.g. ENFP)", max_chars=4)
 st.markdown("[🧠 Not sure about MBTI? Explore types here](https://www.16personalities.com/personality-types)")
@@ -55,22 +55,21 @@ your_age = st.number_input("Your age", min_value=18, max_value=100, step=1)
 st.markdown("**Your height:**")
 col3, col4 = st.columns(2)
 with col3:
-    your_height_ft = st.selectbox("Feet", list(range(4, 7)), index=2, key="you_ft")
+    your_height_ft = st.selectbox("Feet", list(range(4, 8)), index=2, key="you_ft")
 with col4:
     your_height_inch = st.selectbox("Inches", list(range(0, 12)), index=6, key="you_in")
 
-col7, col8 = st.columns([2, 1])
-with col7:
+col1, col2 = st.columns([2, 1])
+with col1:
     your_income = st.number_input("Your annual income (USD)", min_value=10000, step=1000, value=60000, format="%d")
-with col8:
+with col2:
     st.markdown(f"**${your_income:,}**")
 
 your_fitness = st.slider("Your workouts per week", 0, 7, 2)
 your_edu = st.selectbox("Your education", ["High school", "Bachelor's", "Graduate"])
 your_animals = st.radio("Do you love animals?", ["Yes", "No", "Whatever"])
-your_kids = st.radio("Do you have kids?", ["Yes", "No"])
+your_kids = st.radio("Do you have kids?", ["Yes", "No", "No and don't want kids"])
 
-# State list
 us_states = sorted(list(tier_1_states | tier_2_states | {
     "Alaska", "Arkansas", "Connecticut", "Delaware", "Hawaii", "Idaho", "Iowa", "Kansas",
     "Kentucky", "Louisiana", "Maine", "Mississippi", "Montana", "Nebraska", "Nevada",
@@ -93,10 +92,9 @@ def estimate_user_percentile():
     elif your_edu == "Bachelor's": score += 1
 
     try:
-        income_val = int(re.sub(r"\D", "", str(your_income)))
-        if income_val >= 150000: score += 3
-        elif income_val >= 100000: score += 2
-        elif income_val >= 60000: score += 1
+        if your_income >= 150000: score += 3
+        elif your_income >= 100000: score += 2
+        elif your_income >= 60000: score += 1
     except:
         pass
 
@@ -125,10 +123,9 @@ def estimate_user_percentile():
     if your_kids == "No": score += 1
     if your_animals == "No": score -= 1
 
-    state = your_state.strip()
-    if state in tier_1_states:
+    if your_state in tier_1_states:
         score += 2
-    elif state in tier_2_states:
+    elif your_state in tier_2_states:
         score += 1
 
     noise = random.uniform(-1.5, 1.5)
