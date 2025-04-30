@@ -26,6 +26,7 @@ ideal_animals = st.radio("Partner loves animals?", ["Yes", "No", "Whatever"])
 ideal_kids = st.radio("Partner has kids?", ["Yes", "No"])
 ideal_attractiveness = st.slider("Partner's attractiveness (1 = meh, 10 = model)", 1, 10, 7)
 ideal_mbti = st.text_input("Partner MBTI (optional)", max_chars=4)
+st.markdown("[💡 Explore MBTI types](https://www.16personalities.com/personality-types)")
 
 # -------------------- You Section --------------------
 st.divider()
@@ -49,6 +50,7 @@ your_kids = st.radio("Do you have kids?", ["Yes", "No"])
 your_state = st.text_input("Your US State", placeholder="e.g. California")
 your_attractiveness = st.slider("Your attractiveness (1 = troll, 10 = hot hot hot)", 1, 10, 6)
 your_mbti = st.text_input("Your MBTI (optional)", max_chars=4)
+st.markdown("[💡 Explore MBTI types](https://www.16personalities.com/personality-types)")
 yearly_meet = st.slider("How many people are you willing to meet per year?", 0, 20, 5)
 
 # -------------------- ChatGPT Scoring --------------------
@@ -131,9 +133,9 @@ if st.button("💘 Calculate My Love Odds"):
             elif your_rank >= 70:
                 roast = "🌟 Main character energy with ick management issues."
             elif your_rank >= 50:
-                roast = "🎭 Mid-tier hottie with room for growth."
+                roast = "🧀 Mid-tier hottie with room for growth."
             elif your_rank >= 30:
-                roast = "📉 You’re dating-app purgatory. Swipeable but forgettable."
+                roast = "🤳 You’re dating-app purgatory. Swipeable but forgettable."
             elif your_rank >= 10:
                 roast = "🙃 You’re someone’s type, but it’s probably not your type."
             else:
@@ -162,19 +164,39 @@ if st.button("💘 Calculate My Love Odds"):
 
             # 🧠 Tips
             st.markdown("---")
-            if your_rank >= 90:
+            
+            if true_rank >= 90:
                 st.markdown("💅 You're perfect. Maybe it’s your standards that need a glow-up 👀")
+            
             elif P_adjusted >= 90:
                 st.markdown("🫣 The math says yes. The vibes say... swipe wisely.")
+            
             elif P_adjusted >= 50:
                 st.markdown("📈 You're close! Just polish one thing — maybe income, looks, or vibes — and you're golden.")
+            
             else:
                 if yearly_meet < 20:
                     new_meet = min(20, yearly_meet + 5)
                     new_P = 1 - (1 - ideal_percentile / 100) ** new_meet
                     new_P_adj = round(new_P * 100 * compatibility, 2)
                     diff = round(new_P_adj - P_adjusted, 2)
+            
                     if diff > 1:
-                        st.markdown(f"🧠 If you increased your yearly interactions from {yearly_meet} to {new_meet}, your odds could improve to `{new_P_adj:.2f}%` — that’s +{diff}%!")
+                        st.markdown(
+                            f"🧠 If you increased your yearly interactions from {yearly_meet} to {new_meet}, "
+                            f"your odds could improve to `{new_P_adj:.2f}%` — that’s +{diff}%!"
+                        )
+            
+                        # Ghosting bonus
+                        old_ghosts = max(1, int(100 / P_adjusted))
+                        new_ghosts = max(1, int(100 / new_P_adj))
+                        if new_ghosts < old_ghosts:
+                            st.markdown(
+                                f"👻 Bonus: You might only have to ghost `{new_ghosts}` people instead of `{old_ghosts}`. "
+                                f"Progress 🫡"
+                            )
+                    else:
+                        st.markdown("🧠 You're doing your part. Now it’s on fate (or the algorithm) to deliver 💌")
                 else:
                     st.markdown("🧠 You’re already meeting plenty of people — maybe it’s your filters that need the adjustment 💀")
+
