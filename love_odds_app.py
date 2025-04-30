@@ -2,6 +2,10 @@ import streamlit as st
 import math
 import re
 import random
+import openai
+
+# 🔐 API setup
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # -------------------- GDP-based State Tiers --------------------
 tier_1_states = {
@@ -9,20 +13,18 @@ tier_1_states = {
     "Pennsylvania", "Ohio", "Georgia", "Washington", "New Jersey",
     "Michigan", "North Carolina", "Virginia"
 }
-
 tier_2_states = {
     "Massachusetts", "Tennessee", "Arizona", "Indiana", "Missouri",
     "Wisconsin", "Colorado", "Minnesota", "South Carolina", "Alabama"
 }
 
-# 🧠 PAGE CONFIG
-st.set_page_config(page_title="Love Odds Calculator 💘", layout="centered")
+# PAGE CONFIG
+st.set_page_config(page_title="Reality Check 💘", layout="centered")
 st.title("💘 What Are the Odds You'll Meet *The One*?")
 st.caption("Let’s do the math on your dating standards vs reality. Brutally honest but loving. 💅")
 
 # -------------------- Ideal Partner Input --------------------
 st.subheader("✨ Your Ideal Partner")
-
 st.markdown("**Partner's height is at least:**")
 col1, col2 = st.columns(2)
 with col1:
@@ -42,12 +44,10 @@ ideal_animals = st.radio("Animal lover?", ["Yes", "No", "Whatever"])
 ideal_kids = st.radio("Do they have kids?", ["Yes", "No"])
 ideal_attractiveness = st.slider("How attractive should they be? (1 = meh, 10 = model)", 1, 10, 7)
 ideal_mbti = st.text_input("MBTI (e.g. ENFP)", max_chars=4)
-st.markdown("[🧠 Not sure about MBTI? Explore types here](https://www.16personalities.com/personality-types)")
 
 # -------------------- User Input --------------------
 st.divider()
 st.subheader("🪞You (Be honest, we won’t judge 😉)")
-
 your_gender = st.selectbox("What is your gender?", ["Woman", "Man", "Non-binary / Other"])
 your_attraction = st.selectbox("Who are you romantically interested in?", ["Men", "Women", "Everyone"])
 your_age = st.number_input("Your age", min_value=18, max_value=100, step=1)
@@ -77,151 +77,73 @@ us_states = sorted(list(tier_1_states | tier_2_states | {
     "South Dakota", "Utah", "Vermont", "West Virginia", "Wyoming"
 }))
 your_state = st.selectbox("Your state (US only)", us_states)
-
 your_attractiveness = st.slider("How attractive are you? (1 = troll, 10 = hot hot hot)", 1, 10, 6)
 your_mbti = st.text_input("Your MBTI", max_chars=4)
-st.markdown("[💡 Explore MBTI types](https://www.16personalities.com/personality-types)")
-
 yearly_meet = st.slider("How many people are you willing to meet per year?", 0, 20, 5)
 
-# -------------------- Scoring Logic --------------------
-def estimate_user_percentile():
-    score = 0
-
-    if your_edu == "Graduate": score += 2
-    elif your_edu == "Bachelor's": score += 1
-
+# -------------------- GPT PROMPTING FUNCTION --------------------
+def get_gpt_percentile(prompt, model="gpt-4-turbo"):
     try:
-        if your_income >= 150000: score += 3
-        elif your_income >= 100000: score += 2
-        elif your_income >= 60000: score += 1
+        response = openai.ChatCompletion.create(
+            model=model,
+            temperature=0.2,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You're a brutally honest, emotionally aware dating coach and data analyst. "
+                        "Evaluate the dating appeal or rarity of the profile based on US standards. "
+                        "Return ONLY a number between 0.1 and 100. No text. No symbols. No explanations."
+                    )
+                },
+                {"role": "user", "content": prompt}
+            ]
+        )
+        text = response.choices[0].message["content"].strip()
+        match = re.search(r"(\d+(\.\d+)?)", text)
+        if match:
+            return float(match.group(1))
+        return None
     except:
-        pass
+        return None
 
-    if your_fitness >= 5: score += 2
-    elif your_fitness >= 2: score += 1
-
-    height_in_inches = (your_height_ft * 12) + your_height_inch
-    if your_gender == "Man":
-        if height_in_inches >= 75: score += 2
-        elif height_in_inches >= 70: score += 1
-    else:
-        if height_in_inches >= 66: score += 1
-
-    if your_attractiveness >= 9: score += 2
-    elif your_attractiveness >= 7: score += 1
-
-    mbti = your_mbti.upper()
-    if len(mbti) == 4:
-        if your_gender == "Man":
-            if mbti[0] == "E": score += 1
-            if mbti[2] == "T": score += 1
-        elif your_gender == "Woman":
-            if mbti[0] == "E": score += 1
-            if mbti[2] == "F": score += 1
-
-    if your_kids == "No": score += 1
-    if your_animals == "No": score -= 1
-
-    if your_state in tier_1_states:
-        score += 2
-    elif your_state in tier_2_states:
-        score += 1
-
-    noise = random.uniform(-1.5, 1.5)
-    percentile = 100 - (score / 15 * 100) + noise
-    return round(min(max(percentile, 0.1), 99.9), 1), score
-
-# -------------------- Final Result --------------------
+# -------------------- BUTTON + MAIN LOGIC --------------------
 if st.button("💘 Calculate My Love Odds"):
-    user_percentile, raw_score = estimate_user_percentile()
 
-    ideal_score = ideal_fitness + ideal_attractiveness + (2 if ideal_edu == "Graduate" else 1 if ideal_edu == "Bachelor's" else 0)
-    ideal_percentile = max(0.001, min(1, 1 - ideal_score / 20))
+    # PROMPTS for GPT
+    user_prompt = f"""
+    - Gender: {your_gender}
+    - Height: {your_height_ft}'{your_height_inch}
+    - Income: {your_income}
+    - Education: {your_edu}
+    - Fitness: {your_fitness} days/week
+    - Job: (assume based on income)
+    - Attractiveness: {your_attractiveness}/10
+    - MBTI: {your_mbti}
+    - State: {your_state}
+    - Has kids: {your_kids}
+    """
 
-    n = yearly_meet
-    P = 1 - (1 - ideal_percentile) ** n
-    P_percent = round(P * 100, 2)
+    ideal_prompt = f"""
+    Estimate how rare this ideal partner is in the US dating pool.
 
-    st.success("🎯 Results Are In! Let’s see how delulu you are...")
-    st.markdown(f"**You're in the top `{user_percentile}%` of daters.**")
-    true_rank = round(100 - user_percentile, 1)
+    - Height at least: {ideal_height_ft}'{ideal_height_inch}
+    - Income: above {ideal_income}
+    - Fitness: {ideal_fitness} workouts/week
+    - Education: {ideal_edu}
+    - Animal lover: {ideal_animals}
+    - Has kids: {ideal_kids}
+    - MBTI: {ideal_mbti}
+    - Physical attractiveness rating: {ideal_attractiveness}/10
+    """
 
-    # Compatibility factor: the better you are, the higher your chances actually are
-    compatibility_factor = true_rank / 100
-    P_adjusted = round(P_percent * compatibility_factor, 2)
-    
-    if true_rank >= 90:
-        roast = "🦄 A literal unicorn. They’re not ready for you."
-    elif true_rank >= 70:
-        roast = "🌟 Main character energy with ick management issues."
-    elif true_rank >= 50:
-        roast = "🎭 Mid-tier hottie with room for growth."
-    elif true_rank >= 30:
-        roast = "📉 You’re dating-app purgatory. Swipeable but forgettable."
-    elif true_rank >= 10:
-        roast = "🙃 You’re someone’s type, but it’s probably not your type."
+    # Get percentiles
+    user_percentile = get_gpt_percentile(user_prompt)
+    ideal_percentile = get_gpt_percentile(ideal_prompt)
+
+    # --- Continue logic ---
+    if user_percentile is None or ideal_percentile is None:
+        st.error("Sorry, couldn't get a valid percentile from ChatGPT. Try again or check your API key.")
     else:
-        roast = "😬 You’re... brave. Good luck out there."
-
-    st.markdown(f"**{roast}**")
-    st.markdown(f"**Your ideal partner is in the top `{round(ideal_percentile * 100, 2)}%` rarity.**")
-    st.markdown(f"**Your chance of meeting them in a year: `{P_adjusted}%`** 🎯")
-
-    if P_adjusted > 0:
-        expected_people = max(1, int(100 / P_adjusted))
-        st.markdown(f"👻 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
-
-    # 💘 Final Conclusion
-    your_rank = 100 - user_percentile
-    partner_rank = 100 - (ideal_percentile * 100)
-
-    # 💘 Logic Based on Compatibility and Realism
-    if abs(your_rank - partner_rank) <= 15 and P_adjusted >= 10:
-        st.success("💘 Conclusion: You're dreaming at your level. Statistically, this could work 💌")
-    elif your_rank < partner_rank - 25 and P_adjusted < 30:
-        st.warning("😵‍💫 Conclusion: Babe... your standards are giving ✨fictional character✨.")
-    elif P_adjusted > 70:
-        st.success("💘 Conclusion: You're either a hot commodity or just realistic. Keep going, Cupid!")
-    elif P_adjusted > 30:
-        st.info("🧐 Conclusion: You're choosy, but not delulu.")
-    else:
-        st.warning("📉 Conclusion: You might be trying too hard to outkick your coverage. Try aiming closer to home 💔")
-
-    st.markdown("---")
-    # 🧠 THEN Tip logic
-    if true_rank >= 90:
-        st.markdown("💅 You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
-    
-    elif P_adjusted >= 90:
-        st.markdown("🫣 Tip: The math says yes. The vibes say... swipe wisely.")
-    
-    elif P_adjusted >= 50:
-        weakest = "something you’re not listing"
-        st.markdown(f"📈 Tip: You’re close! Improving just one trait — maybe {weakest} — could push you over the edge.")
-    
-    else:
-        if yearly_meet < 20:
-            increase_by = min(5, 20 - yearly_meet)
-            new_meet = yearly_meet + increase_by
-            new_n = new_meet
-            new_P = 1 - (1 - ideal_percentile) ** new_n
-            new_adjusted = round((new_P * 100 * true_rank / 100), 2)
-            improvement = round(new_adjusted - P_adjusted, 2)
-            percent_boost = round((improvement / P_adjusted) * 100, 1) if P_adjusted > 0 else 0
-    
-            if improvement >= 1:
-                st.markdown(f"🧠 Tip: If you increase your yearly interactions from {yearly_meet} to {new_meet}, your odds could improve to `{new_adjusted:.2f}%` — that’s a `{percent_boost}%` boost!")
-                
-                # 👻 Optional Ghosting Reduction
-                old_ghosts = max(1, int(100 / P_adjusted))
-                new_ghosts = max(1, int(100 / new_adjusted))
-                ghost_diff = old_ghosts - new_ghosts
-                if ghost_diff >= 1:
-                    st.markdown(f"👻 Bonus: You might only have to ghost `{new_ghosts}` people instead of `{old_ghosts}`. Progress 🫡")
-    
-            else:
-                st.markdown("🧠 Tip: You're doing your part. Now it’s on fate (or the algorithm) to deliver 💌")
-    
-        else:
-            st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
+        # CONTINUE with main logic (use the corrected version you already have)
+        st.success("🎯 GPT scoring worked! You can now continue with the result + roast + tip logic 💅")
