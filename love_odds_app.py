@@ -2,6 +2,10 @@ import streamlit as st
 import math
 import re
 import random
+import openai
+
+# 🔐 Replace with your actual OpenAI API Key if needed
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # 🧠 PAGE CONFIG
 st.set_page_config(page_title="Love Odds Calculator 💘", layout="centered")
@@ -86,11 +90,47 @@ def estimate_user_percentile():
     score = max(0, min(score, 15))
     noise = random.uniform(-2.5, 2.5)
     percentile = 100 - (score / 15 * 100) + noise
-    return round(min(max(percentile, 0.1), 99.9), 1)
+    return round(min(max(percentile, 0.1), 99.9), 1), score
+
+# Optional: GPT Vibe Score
+
+def get_gpt_vibe_score(prompt):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            temperature=0.8,
+            messages=[
+                {"role": "system", "content": "You're a brutally honest dating coach. Judge their dating vibe on social, cultural, and personality factors. Return ONLY a number between 0.1 and 100."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        text = response.choices[0].message.content.strip()
+        match = re.search(r"(\d+(\.\d+)?)", text)
+        return float(match.group(1)) if match else 50.0
+    except:
+        return 50.0
 
 # -------------------- Result --------------------
 if st.button("💘 Calculate My Love Odds"):
-    user_percentile = estimate_user_percentile()
+    user_percentile, raw_score = estimate_user_percentile()
+
+    # Vibe prompt for GPT
+    vibe_prompt = f"""
+    Gender: {your_gender}
+    Age: {your_age}
+    Income: {your_income}
+    Fitness: {your_fitness}/week
+    Education: {your_edu}
+    Job: {your_job}
+    State: {your_state}
+    MBTI: {your_mbti}
+    Attractiveness: {your_attractiveness}/10
+    Give a dating-market percentile based on vibe, charisma, culture fit, and emotional intelligence.
+    """
+    vibe_percentile = get_gpt_vibe_score(vibe_prompt)
+
+    # Final score blend
+    final_percentile = round(min(max((user_percentile * 0.7 + vibe_percentile * 0.3 + random.uniform(-2, 2)), 0.1), 99.9), 1)
 
     ideal_score = ideal_fitness + ideal_attractiveness + (2 if ideal_edu == "Graduate" else 1 if ideal_edu == "Bachelor's" else 0)
     ideal_percentile = max(0.001, min(1, 1 - ideal_score / 20))
@@ -100,17 +140,17 @@ if st.button("💘 Calculate My Love Odds"):
     P_percent = round(P * 100, 2)
 
     st.success("🎯 Results Are In! Let’s see how delulu you are...")
-    st.markdown(f"**You're in the top {round(user_percentile, 1)}% of daters.**")
+    st.markdown(f"**You're in the top {final_percentile}% of daters.**")
 
-    if user_percentile <= 10:
+    if final_percentile <= 10:
         roast = "😬 You’re... brave. Good luck out there."
-    elif user_percentile <= 30:
+    elif final_percentile <= 30:
         roast = "🙃 You’re someone’s type, but it’s probably not your type."
-    elif user_percentile <= 50:
+    elif final_percentile <= 50:
         roast = "📉 You’re dating-app purgatory. Swipeable but forgettable."
-    elif user_percentile <= 70:
+    elif final_percentile <= 70:
         roast = "🎭 Mid-tier hottie with room for growth."
-    elif user_percentile <= 90:
+    elif final_percentile <= 90:
         roast = "🌟 Main character energy with ick management issues."
     else:
         roast = "🦄 A literal unicorn. They’re not ready for you."
