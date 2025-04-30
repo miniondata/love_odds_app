@@ -89,38 +89,40 @@ def get_percentile(prompt):
 # -------------------- Prompt Templates --------------------
 def make_user_prompt():
     return f"""
-    Evaluate this dating profile's appeal in the US dating market.
+    Evaluate this dating profile's **objective desirability** in the US dating market.
 
     - Gender: {your_gender}
     - Interested in: {your_attraction}
     - Age: {your_age}
     - Height: {your_height_ft}'{your_height_in}"
     - Income: ${your_income}
-    - Fitness: {your_fitness} workouts/week
     - Education: {your_edu}
-    - Animal lover: {your_animals}
+    - Fitness: {your_fitness} workouts/week
+    - Loves animals: {your_animals}
     - Has kids: {your_kids}
     - State: {your_state}
-    - Attractiveness: {your_attractiveness}
-    - MBTI: {your_mbti}
+    - Physical attractiveness rating (1 = troll, 10 = hot hot hot): {your_attractiveness}
+    - MBTI: {your_mbti or 'Not specified'}
 
-    Respond with a percentile score (0.1–100).
+    Focus on physical and socioeconomic desirability, not personality, vibes, or emotional traits.
+    Return ONLY a percentile score from 0.1 to 100.
     """
 
 def make_ideal_prompt():
     return f"""
-    Estimate how rare this ideal partner is in the US dating pool. Focus on their most selective traits.
+    Estimate how rare this ideal partner is in the US dating pool based on physical and socioeconomic traits.
     
-    - Height at least: {ideal_height_ft}'{ideal_height_in}"
-    - Income at least: ${ideal_income}
-    - Fitness: {ideal_fitness} workouts/week
+    - Minimum Height: {ideal_height_ft}'{ideal_height_in}"
+    - Minimum Income: ${ideal_income}
     - Education: {ideal_edu}
+    - Workouts/week: {ideal_fitness}
     - Loves animals: {ideal_animals}
     - Has kids: {ideal_kids}
-    - Attractiveness (1-10): {ideal_attractiveness}
+    - Physical attractiveness rating (1 = unattractive, 10 = model-level hot): {ideal_attractiveness}
     - MBTI: {ideal_mbti or 'Not specified'}
 
-    Respond with a percentile score (0.1–100) — lower = rarer.
+    Focus on physical traits. Emotional or social qualities like “kindness” or “humor” are NOT to be factored. 
+    Respond with a percentile score (0.1–100) — where **lower means more rare and desirable**.
     """
 
 # -------------------- Result Logic --------------------
