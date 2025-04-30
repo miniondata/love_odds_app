@@ -26,7 +26,7 @@ st.subheader("✨ Your Ideal Partner")
 st.markdown("**Partner's height must be at least:**")
 col1, col2 = st.columns(2)
 with col1:
-    ideal_height_ft = st.selectbox("Feet", list(range(4, 6)), index=2, key="ideal_ft")
+    ideal_height_ft = st.selectbox("Feet", list(range(4, 7)), index=2, key="ideal_ft")
 with col2:
     ideal_height_inch = st.selectbox("Inches", list(range(0, 12)), index=6, key="ideal_in")
 
@@ -52,7 +52,7 @@ your_age = st.number_input("Your age", min_value=18, max_value=100, step=1)
 st.markdown("**Your height:**")
 col3, col4 = st.columns(2)
 with col3:
-    your_height_ft = st.selectbox("Feet", list(range(4, 6)), index=2, key="you_ft")
+    your_height_ft = st.selectbox("Feet", list(range(4, 7)), index=2, key="you_ft")
 with col4:
     your_height_inch = st.selectbox("Inches", list(range(0, 12)), index=6, key="you_in")
 
