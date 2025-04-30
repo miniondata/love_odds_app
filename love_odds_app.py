@@ -39,7 +39,7 @@ with col2:
 ideal_fitness = st.slider("Workouts per week", 0, 7, 3)
 ideal_edu = st.selectbox("Education level", ["High school", "Bachelor's", "Graduate"])
 ideal_animals = st.radio("Animal lover?", ["Yes", "No", "Whatever"])
-ideal_kids = st.radio("Do they have kids?", ["Yes", "No", "No and don't want kids"])
+ideal_kids = st.radio("Do they have kids?", ["Yes", "No"])
 ideal_attractiveness = st.slider("How attractive should they be? (1 = meh, 10 = model)", 1, 10, 7)
 ideal_mbti = st.text_input("MBTI (e.g. ENFP)", max_chars=4)
 st.markdown("[🧠 Not sure about MBTI? Explore types here](https://www.16personalities.com/personality-types)")
@@ -68,7 +68,7 @@ with col2:
 your_fitness = st.slider("Your workouts per week", 0, 7, 2)
 your_edu = st.selectbox("Your education", ["High school", "Bachelor's", "Graduate"])
 your_animals = st.radio("Do you love animals?", ["Yes", "No", "Whatever"])
-your_kids = st.radio("Do you have kids?", ["Yes", "No", "No and don't want kids"])
+your_kids = st.radio("Do you have kids?", ["Yes", "No"])
 
 us_states = sorted(list(tier_1_states | tier_2_states | {
     "Alaska", "Arkansas", "Connecticut", "Delaware", "Hawaii", "Idaho", "Iowa", "Kansas",
@@ -167,11 +167,19 @@ if st.button("💘 Calculate My Love Odds"):
         expected_people = int(1 / ideal_percentile)
         st.markdown(f"💡 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
 
-    if monthly_meet < 30:
-        new_meet = monthly_meet + 10
+    if P_percent < 70:
+    if monthly_meet < 50:
+        new_meet = min(monthly_meet + 10, 50)
         new_n = new_meet * 12
         new_odds = 1 - (1 - ideal_percentile) ** new_n
         st.markdown(f"🧠 Tip: If you increased your monthly interactions from {monthly_meet} to {new_meet}, your odds could improve to about `{round(new_odds * 100, 2)}%`. Just saying.")
+    else:
+        st.markdown("🧠 Tip: You’re meeting plenty of people — maybe it's time to expand your type just a little?")
+elif P_percent < 90:
+    weakest = "something you’re not listing"  # 👈 Optional: use scoring breakdown if you want specifics
+    st.markdown(f"📈 Tip: You’re close! Just improving one area — maybe {weakest} — could make a difference.")
+else:
+    st.markdown("💅 Tip: You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
 
     st.markdown("---")
     if P_percent > 50:
