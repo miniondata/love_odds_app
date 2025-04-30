@@ -19,6 +19,7 @@ with col1:
     ideal_height_ft = st.selectbox("Feet", list(range(4, 8)), index=2)
 with col2:
     ideal_height_in = st.selectbox("Inches", list(range(0, 12)), index=6)
+
 ideal_income = st.number_input("Partner's minimum income (USD/year)", min_value=10000, value=60000, step=1000, format="%d")
 ideal_fitness = st.slider("Partner's workouts per week", 0, 7, 3)
 ideal_edu = st.selectbox("Partner's education level", ["High school", "Bachelor's", "Graduate"])
@@ -62,7 +63,7 @@ def get_percentile(prompt):
             {
                 "role": "system",
                 "content": "You're a brutally honest, emotionally aware dating coach and data analyst. "
-                            "You analyze data based on the US democracy."
+                           "You analyze data based on the US democracy. "
                            "You return ONLY a percentile between 0.1 and 100 with no explanation, symbols or extra words."
             },
             {"role": "user", "content": prompt}
@@ -112,7 +113,6 @@ def make_ideal_prompt():
 # -------------------- Result Logic --------------------
 if st.button("💘 Calculate My Love Odds"):
     with st.spinner("Crunching your odds..."):
-
         user_percentile = get_percentile(make_user_prompt())
         ideal_percentile = get_percentile(make_ideal_prompt())
 
@@ -120,6 +120,7 @@ if st.button("💘 Calculate My Love Odds"):
             st.error("Something went wrong with the evaluation. Try again or check your API key.")
         else:
             your_rank = 100 - user_percentile
+            true_rank = your_rank  # now defined for tip logic
             partner_rank = 100 - ideal_percentile
             compatibility = your_rank / 100
             P = 1 - (1 - ideal_percentile / 100) ** yearly_meet
@@ -164,30 +165,24 @@ if st.button("💘 Calculate My Love Odds"):
 
             # 🧠 Tips
             st.markdown("---")
-            
             if true_rank >= 90:
                 st.markdown("💅 You're perfect. Maybe it’s your standards that need a glow-up 👀")
-            
             elif P_adjusted >= 90:
                 st.markdown("🫣 The math says yes. The vibes say... swipe wisely.")
-            
             elif P_adjusted >= 50:
                 st.markdown("📈 You're close! Just polish one thing — maybe income, looks, or vibes — and you're golden.")
-            
             else:
                 if yearly_meet < 20:
                     new_meet = min(20, yearly_meet + 5)
                     new_P = 1 - (1 - ideal_percentile / 100) ** new_meet
                     new_P_adj = round(new_P * 100 * compatibility, 2)
                     diff = round(new_P_adj - P_adjusted, 2)
-            
+
                     if diff > 1:
                         st.markdown(
                             f"🧠 If you increased your yearly interactions from {yearly_meet} to {new_meet}, "
                             f"your odds could improve to `{new_P_adj:.2f}%` — that’s +{diff}%!"
                         )
-            
-                        # Ghosting bonus
                         old_ghosts = max(1, int(100 / P_adjusted))
                         new_ghosts = max(1, int(100 / new_P_adj))
                         if new_ghosts < old_ghosts:
@@ -199,4 +194,3 @@ if st.button("💘 Calculate My Love Odds"):
                         st.markdown("🧠 You're doing your part. Now it’s on fate (or the algorithm) to deliver 💌")
                 else:
                     st.markdown("🧠 You’re already meeting plenty of people — maybe it’s your filters that need the adjustment 💀")
-
