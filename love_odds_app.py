@@ -59,7 +59,7 @@ def estimate_user_percentile():
         elif income_val >= 100000: score += 2
         elif income_val >= 60000: score += 1
     except:
-        pass
+        income_val = 0
 
     if your_fitness >= 5: score += 2
     elif your_fitness >= 2: score += 1
@@ -88,53 +88,37 @@ def estimate_user_percentile():
 
     score += your_attractiveness - 5
     score = max(0, min(score, 15))
-    noise = random.uniform(-1.5, 1.5)
+    noise = random.uniform(-1.0, 1.0)
     percentile = (score / 15 * 100) + noise
-    return round(min(max(percentile, 0.1), 99.9), 1), score
+    return round(min(max(percentile, 0.1), 99.9), 1), score, income_val
 
-# -------------------- GPT Vibe Check --------------------
-def get_gpt_vibe_score_and_feedback(prompt):
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            temperature=0.7,
-            messages=[
-                {"role": "system", "content": "You're an honest but emotionally intelligent dating coach. Return a percentile (0.1–100) and one short line of feedback, separated by a dash."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        text = response.choices[0].message.content.strip()
-        match = re.search(r"(\d+(\.\d+)?)\s*[-–—]\s*(.*)", text)
-        if match:
-            score = float(match.group(1))
-            comment = match.group(3).strip()
-            return score, comment
-    except:
-        return 50.0, "You're doing okay, babe. Could be worse."
+# -------------------- Glow-up Tip --------------------
+def get_glow_up_tip(score, traits):
+    tips = []
+
+    if traits["fitness"] < 2:
+        tips.append("💪 Try working out 2–3x/week — it's hot *and* boosts confidence.")
+    if traits["income"] < 40000:
+        tips.append("💼 Level up your income game — even a side hustle adds shine.")
+    if traits["education"] == "High school":
+        tips.append("📚 Consider upskilling — a short course could shift the vibe.")
+    if traits["attractiveness"] < 5:
+        tips.append("💅 Confidence makeover? Try a new haircut or glow-up wardrobe.")
+    if traits["mbti"] and traits["mbti"][0] == "I":
+        tips.append("🎤 Channel your inner extrovert — start a convo, say hi more.")
+    if traits["job"].lower() in ["unemployed", "student", "part-time"]:
+        tips.append("🧠 Build prestige — title upgrades impress more than you'd think.")
+
+    if not tips:
+        return "You’re already a star 🌟 Just keep showing up."
+    else:
+        return random.choice(tips)
 
 # -------------------- Result --------------------
 if st.button("💘 Calculate My Love Odds"):
-    user_percentile, raw_score = estimate_user_percentile()
+    user_percentile, raw_score, parsed_income = estimate_user_percentile()
 
-    vibe_prompt = f"""
-    Evaluate the dating market value of the following person in the US context. Be encouraging if top-tier, but realistic if average or below. Return a percentile and a short comment.
-
-    Gender: {your_gender}
-    Age: {your_age}
-    Height: {your_height}
-    Income: {your_income}
-    Fitness: {your_fitness} workouts/week
-    Education: {your_edu}
-    Job: {your_job}
-    State: {your_state}
-    MBTI: {your_mbti}
-    Attractiveness: {your_attractiveness}/10
-    Kids: {your_kids}
-    """
-
-    vibe_percentile, vibe_comment = get_gpt_vibe_score_and_feedback(vibe_prompt)
-
-    final_percentile = round(min(max((user_percentile * 0.85 + vibe_percentile * 0.15 + random.uniform(-1.5, 1.5)), 0.1), 99.9), 1)
+    final_percentile = round(min(max(user_percentile, 0.1), 99.9), 1)
 
     ideal_score = ideal_fitness + ideal_attractiveness + (2 if ideal_edu == "Graduate" else 1 if ideal_edu == "Bachelor's" else 0)
     ideal_percentile = max(0.001, min(1, 1 - ideal_score / 20))
@@ -145,7 +129,6 @@ if st.button("💘 Calculate My Love Odds"):
 
     st.success("🎯 Results Are In! Let’s see how delulu you are...")
     st.markdown(f"**You're in the top {final_percentile}% of daters.**")
-    st.markdown(f"*GPT’s vibe check:* `{vibe_percentile}%` – _{vibe_comment}_")
 
     if final_percentile <= 10:
         roast = "😬 You’re... brave. Good luck out there."
@@ -163,6 +146,18 @@ if st.button("💘 Calculate My Love Odds"):
     st.markdown(f"**{roast}**")
     st.markdown(f"**Your ideal partner is in the top {round(ideal_percentile * 100, 2)}% rarity.**")
     st.markdown(f"**Your chance of meeting them in a year: `{P_percent}%`** 🎯")
+
+    traits = {
+        "fitness": your_fitness,
+        "income": parsed_income,
+        "education": your_edu,
+        "attractiveness": your_attractiveness,
+        "mbti": your_mbti.upper(),
+        "job": your_job
+    }
+
+    glow_up = get_glow_up_tip(raw_score, traits)
+    st.markdown(f"🌟 **Glow-Up Tip:** {glow_up}")
 
     if P_percent > 0:
         expected_people = int(1 / ideal_percentile)
