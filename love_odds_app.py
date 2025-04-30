@@ -72,12 +72,21 @@ def get_percentile(prompt):
             {
                 "role": "system",
                 "content": (
-                    "You're a brutally honest dating coach and data analyst evaluating profiles for the US dating market. "
-                    "Your job is to evaluate dating profiles by US standards, with no regard for kindness. "
-                    "You rank profiles by **objective desirability** based on physical appearance, income, education, age, and lifestyle traits like having kids or being fit."
-                    "You prioritize *objective physical attractiveness*, socioeconomic status (income, education), "
-                    "Higher income (especially over $150K), higher attractiveness (8+), being child-free, and being under 40 are all strongly preferred. "
-                    "Return ONLY a percentile score from 0.1 to 100 — where 0.1% = elite top-tier dater, and 100% = bottom of the dating pool. No text. No symbols. No explanation. Just the number."
+                    "You're a brutally honest dating coach and data analyst for the US dating market. 
+                    You evaluate profiles based on **objective desirability** (not emotional connection, personality, or vibes).
+                    
+                    Use these general US dating norms for calibration:
+                    - Income: $100K/year = top 20%, $150K+ = top 10%, $200K+ = top 5%
+                    - Height (men): 5'10"+ = top 50%, 6'0"+ = top 15%, 6'2"+ = top 5%
+                    - Physical Attractiveness (1–10): 8+ = top 15%, 9+ = top 5%, 10 = top 1%
+                    - Age: Under 30 = favorable for women; Under 40 = favorable for men
+                    - Kids: Having children is generally a disadvantage unless stated otherwise
+                    - Fitness: 3–5 workouts/week = average; 6–7 = very fit
+                    
+                    Return ONLY a percentile score between 0.1 and 100 (no symbols, no explanation) where:
+                    - **0.1% = exceptionally desirable (elite)**
+                    - **100% = lowest ranked**
+                    "
                 )
             },
             {"role": "user", "content": prompt}
@@ -91,6 +100,7 @@ def get_percentile(prompt):
 def make_user_prompt():
     return f"""
     Evaluate this dating profile's **objective appeal** in the US dating market.
+    Use factors like physical appearance, income, education, fitness, age, and whether they have kids.
 
     - Gender: {your_gender}
     - Interested in: {your_attraction}
@@ -121,8 +131,8 @@ def make_ideal_prompt():
     - Physical attractiveness rating (1 = unattractive, 10 = model-level hot): {ideal_attractiveness}
     - MBTI: {ideal_mbti or 'Not specified'}
 
-    Focus on physical traits. Emotional or social qualities like “kindness” or “humor” are NOT to be factored. 
-    Respond with a percentile score (0.1–100) — where **lower means more rare and desirable**.
+    Rarity is based on how common this person would be in the general population.
+    Return only a number between 0.1 and 100 — **lower = rarer/more elite.**
     """
 
 # -------------------- Result Logic --------------------
