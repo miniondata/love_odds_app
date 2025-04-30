@@ -88,49 +88,53 @@ def estimate_user_percentile():
 
     score += your_attractiveness - 5
     score = max(0, min(score, 15))
-    noise = random.uniform(-2.5, 2.5)
-    percentile = 100 - (score / 15 * 100) + noise
+    noise = random.uniform(-1.5, 1.5)
+    percentile = (score / 15 * 100) + noise
     return round(min(max(percentile, 0.1), 99.9), 1), score
 
-# Optional: GPT Vibe Score
-
-def get_gpt_vibe_score(prompt):
+# -------------------- GPT Vibe Check --------------------
+def get_gpt_vibe_score_and_feedback(prompt):
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",
-            temperature=0.8,
+            temperature=0.7,
             messages=[
-                {"role": "system", "content": "You're a brutally honest dating coach. Judge their dating vibe on social, cultural, and personality factors. Return ONLY a number between 0.1 and 100."},
+                {"role": "system", "content": "You're an honest but emotionally intelligent dating coach. Return a percentile (0.1–100) and one short line of feedback, separated by a dash."},
                 {"role": "user", "content": prompt}
             ]
         )
         text = response.choices[0].message.content.strip()
-        match = re.search(r"(\d+(\.\d+)?)", text)
-        return float(match.group(1)) if match else 50.0
+        match = re.search(r"(\d+(\.\d+)?)\s*[-–—]\s*(.*)", text)
+        if match:
+            score = float(match.group(1))
+            comment = match.group(3).strip()
+            return score, comment
     except:
-        return 50.0
+        return 50.0, "You're doing okay, babe. Could be worse."
 
 # -------------------- Result --------------------
 if st.button("💘 Calculate My Love Odds"):
     user_percentile, raw_score = estimate_user_percentile()
 
-    # Vibe prompt for GPT
     vibe_prompt = f"""
+    Evaluate the dating market value of the following person in the US context. Be encouraging if top-tier, but realistic if average or below. Return a percentile and a short comment.
+
     Gender: {your_gender}
     Age: {your_age}
+    Height: {your_height}
     Income: {your_income}
-    Fitness: {your_fitness}/week
+    Fitness: {your_fitness} workouts/week
     Education: {your_edu}
     Job: {your_job}
     State: {your_state}
     MBTI: {your_mbti}
     Attractiveness: {your_attractiveness}/10
-    Give a dating-market percentile based on vibe, charisma, culture fit, and emotional intelligence.
+    Kids: {your_kids}
     """
-    vibe_percentile = get_gpt_vibe_score(vibe_prompt)
 
-    # Final score blend
-    final_percentile = round(min(max((user_percentile * 0.7 + vibe_percentile * 0.3 + random.uniform(-2, 2)), 0.1), 99.9), 1)
+    vibe_percentile, vibe_comment = get_gpt_vibe_score_and_feedback(vibe_prompt)
+
+    final_percentile = round(min(max((user_percentile * 0.85 + vibe_percentile * 0.15 + random.uniform(-1.5, 1.5)), 0.1), 99.9), 1)
 
     ideal_score = ideal_fitness + ideal_attractiveness + (2 if ideal_edu == "Graduate" else 1 if ideal_edu == "Bachelor's" else 0)
     ideal_percentile = max(0.001, min(1, 1 - ideal_score / 20))
@@ -141,6 +145,7 @@ if st.button("💘 Calculate My Love Odds"):
 
     st.success("🎯 Results Are In! Let’s see how delulu you are...")
     st.markdown(f"**You're in the top {final_percentile}% of daters.**")
+    st.markdown(f"*GPT’s vibe check:* `{vibe_percentile}%` – _{vibe_comment}_")
 
     if final_percentile <= 10:
         roast = "😬 You’re... brave. Good luck out there."
