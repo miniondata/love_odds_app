@@ -1,10 +1,10 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 import math
 import re
 
 # -------------------- API Setup --------------------
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # -------------------- Page Setup --------------------
 st.set_page_config(page_title="Reality Check 💘", layout="centered")
@@ -53,19 +53,20 @@ yearly_meet = st.slider("How many people are you willing to meet per year?", 0, 
 
 # -------------------- ChatGPT Scoring --------------------
 def get_percentile(prompt):
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4-turbo",
         temperature=0,
         messages=[
             {
                 "role": "system",
                 "content": "You're a brutally honest, emotionally aware dating coach and data analyst. "
+                            "You analyze data based on the US democracy."
                            "You return ONLY a percentile between 0.1 and 100 with no explanation, symbols or extra words."
             },
             {"role": "user", "content": prompt}
         ]
     )
-    text = response.choices[0].message["content"].strip()
+    text = response.choices[0].message.content.strip()
     match = re.search(r"(\d+(\.\d+)?)", text)
     return float(match.group(1)) if match else None
 
