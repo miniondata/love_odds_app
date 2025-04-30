@@ -1,6 +1,7 @@
 import streamlit as st
 import math
 import re
+import random
 
 # 🧠 PAGE CONFIG
 st.set_page_config(page_title="Love Odds Calculator 💘", layout="centered")
@@ -83,8 +84,7 @@ def estimate_user_percentile():
 
     score += your_attractiveness - 5
     score = max(0, min(score, 15))
-    import random
-    noise = random.uniform(-2.5, 2.5)  # +/- 2.5% variation
+    noise = random.uniform(-2.5, 2.5)
     percentile = 100 - (score / 15 * 100) + noise
     return round(min(max(percentile, 0.1), 99.9), 1)
 
@@ -101,6 +101,7 @@ if st.button("💘 Calculate My Love Odds"):
 
     st.success("🎯 Results Are In! Let’s see how delulu you are...")
     st.markdown(f"**You're in the top {round(user_percentile, 1)}% of daters.**")
+
     if user_percentile <= 10:
         roast = "😬 You’re... brave. Good luck out there."
     elif user_percentile <= 30:
@@ -114,7 +115,7 @@ if st.button("💘 Calculate My Love Odds"):
     else:
         roast = "🦄 A literal unicorn. They’re not ready for you."
 
-st.markdown(f"**{roast}**")
+    st.markdown(f"**{roast}**")
     st.markdown(f"**Your ideal partner is in the top {round(ideal_percentile * 100, 2)}% rarity.**")
     st.markdown(f"**Your chance of meeting them in a year: `{P_percent}%`** 🎯")
 
