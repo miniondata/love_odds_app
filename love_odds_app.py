@@ -66,27 +66,25 @@ profile_context = generate_profile_context(your_gender, your_attraction)
 
 def get_percentile(prompt):
     response = client.chat.completions.create(
-        model="gpt-4-turbo",
-        temperature=0,
-        messages=[
-            {
-                "role": "system",
-                "content": 
-                    "You're a brutally honest dating coach and data analyst for the US dating market. 
-                    You evaluate profiles based on **objective desirability** (not emotional connection, personality, or vibes).
-                    
-                    Use these general US dating norms for calibration:
-                    - Income: $100K/year = top 20%, $150K+ = top 10%, $200K+ = top 5%
-                    - Height (men): 5'10"+ = top 50%, 6'0"+ = top 15%, 6'2"+ = top 5%
-                    - Physical Attractiveness (1–10): 8+ = top 15%, 9+ = top 5%, 10 = top 1%
-                    - Age: Under 30 = favorable for women; Under 40 = favorable for men
-                    - Kids: Having children is generally a disadvantage unless stated otherwise
-                    - Fitness: 3–5 workouts/week = average; 6–7 = very fit
-                    
-                    Return ONLY a percentile score between 0.1 and 100 (no symbols, no explanation) where:
-                    - **0.1% = exceptionally desirable (elite)**
-                    - **100% = lowest ranked**
-                    "
+    model="gpt-4-turbo",
+    temperature=0,
+    messages=[
+        {
+            "role": "system",
+            "content": """You're a brutally honest dating coach and data analyst for the US dating market. 
+    You evaluate profiles based on **objective desirability** (not emotional connection, personality, or vibes).
+    
+    Use these general US dating norms for calibration:
+    - Income: $100K/year = top 20%, $150K+ = top 10%, $200K+ = top 5%
+    - Height (men): 5'10"+ = top 50%, 6'0"+ = top 15%, 6'2"+ = top 5%
+    - Physical Attractiveness (1–10): 8+ = top 15%, 9+ = top 5%, 10 = top 1%
+    - Age: Under 30 = favorable for women; Under 40 = favorable for men
+    - Kids: Having children is generally a disadvantage unless stated otherwise
+    - Fitness: 3–5 workouts/week = average; 6–7 = very fit
+    
+    Return ONLY a percentile score between 0.1 and 100 (no symbols, no explanation) where:
+    - 0.1% = exceptionally desirable (elite)
+    - 100% = lowest ranked"""
             },
             {"role": "user", "content": prompt}
         ]
