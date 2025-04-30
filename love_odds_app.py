@@ -82,7 +82,7 @@ your_attractiveness = st.slider("How attractive are you? (1 = troll, 10 = hot ho
 your_mbti = st.text_input("Your MBTI", max_chars=4)
 st.markdown("[💡 Explore MBTI types](https://www.16personalities.com/personality-types)")
 
-monthly_meet = st.slider("How many people are you willing to meet per month?", 0, 50, 5)
+yearly_meet = st.slider("How many people are you willing to meet per year?", 0, 20, 5)
 
 # -------------------- Scoring Logic --------------------
 def estimate_user_percentile():
@@ -139,7 +139,7 @@ if st.button("💘 Calculate My Love Odds"):
     ideal_score = ideal_fitness + ideal_attractiveness + (2 if ideal_edu == "Graduate" else 1 if ideal_edu == "Bachelor's" else 0)
     ideal_percentile = max(0.001, min(1, 1 - ideal_score / 20))
 
-    n = monthly_meet * 12
+    n = yearly_meet
     P = 1 - (1 - ideal_percentile) ** n
     P_percent = round(P * 100, 2)
 
@@ -173,20 +173,20 @@ if st.button("💘 Calculate My Love Odds"):
         st.markdown(f"👻 That means if you ghost roughly `{expected_people}` people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
     
     if true_rank >= 90:
-        st.markdown("💅 Tip: You’re perfect, baby. Manifest harder or raise your standards — you've earned it ✨")
+        st.markdown("💅 You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
     elif P_adjusted >= 90:
         st.markdown("🫣 Tip: The math says yes. The vibes say... swipe wisely.")
     elif P_adjusted >= 50:
         weakest = "something you’re not listing"
         st.markdown(f"📈 Tip: You’re close! Improving just one trait — maybe {weakest} — could push you over the edge.")
     else:
-        if monthly_meet < 50:
-            increase_by = min(10, 50 - monthly_meet)
-            new_meet = monthly_meet + increase_by
-            new_n = new_meet * 12
-            new_odds = 1 - (1 - ideal_percentile) ** new_n
-            new_adjusted = round((new_odds * 100) * compatibility_factor, 2)
-            st.markdown(f"🧠 Tip: If you increase your monthly interactions from {monthly_meet} to {new_meet}, your odds could improve to `{new_adjusted:.2f}%`.")
+        if yearly_meet < 20:
+            increase_by = min(5, 20 - yearly_meet)
+            new_meet = yearly_meet + increase_by
+            new_n = new_meet
+            new_P = 1 - (1 - ideal_percentile) ** new_n
+            new_adjusted = round((new_P * 100) * compatibility_factor, 2)
+            st.markdown(f"🧠 Tip: If you increase your yearly interactions from {yearly_meet} to {new_meet}, your odds could improve to `{new_adjusted:.2f}%`.")
         else:
             st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
 
