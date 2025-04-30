@@ -145,19 +145,20 @@ if st.button("💘 Calculate My Love Odds"):
 
     st.success("🎯 Results Are In! Let’s see how delulu you are...")
     st.markdown(f"**You're in the top {user_percentile}% of daters.**")
-
-    if user_percentile <= 10:
-        roast = "😬 You’re... brave. Good luck out there."
-    elif user_percentile <= 30:
-        roast = "🙃 You’re someone’s type, but it’s probably not your type."
-    elif user_percentile <= 50:
-        roast = "📉 You’re dating-app purgatory. Swipeable but forgettable."
-    elif user_percentile <= 70:
-        roast = "🎭 Mid-tier hottie with room for growth."
-    elif user_percentile <= 90:
-        roast = "🌟 Main character energy with ick management issues."
-    else:
+    true_rank = round(100 - user_percentile, 1)
+    
+    if true_rank <= 10:
         roast = "🦄 A literal unicorn. They’re not ready for you."
+    elif true_rank <= 30:
+        roast = "🌟 Main character energy with ick management issues."
+    elif true_rank <= 50:
+        roast = "🎭 Mid-tier hottie with room for growth."
+    elif true_rank <= 70:
+        roast = "📉 You’re dating-app purgatory. Swipeable but forgettable."
+    elif true_rank <= 90:
+        roast = "🙃 You’re someone’s type, but it’s probably not your type."
+    else:
+        roast = "😬 You’re... brave. Good luck out there."
 
     st.markdown(f"**{roast}**")
     st.markdown(f"**Your ideal partner is in the top {round(ideal_percentile * 100, 2)}% rarity.**")
