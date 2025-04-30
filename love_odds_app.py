@@ -83,7 +83,10 @@ def estimate_user_percentile():
 
     score += your_attractiveness - 5
     score = max(0, min(score, 15))
-    return round(100 - (score / 15 * 100), 1)
+    import random
+    noise = random.uniform(-2.5, 2.5)  # +/- 2.5% variation
+    percentile = 100 - (score / 15 * 100) + noise
+    return round(min(max(percentile, 0.1), 99.9), 1)
 
 # -------------------- Result --------------------
 if st.button("💘 Calculate My Love Odds"):
@@ -98,6 +101,20 @@ if st.button("💘 Calculate My Love Odds"):
 
     st.success("🎯 Results Are In! Let’s see how delulu you are...")
     st.markdown(f"**You're in the top {round(user_percentile, 1)}% of daters.**")
+    if user_percentile <= 10:
+        roast = "😬 You’re... brave. Good luck out there."
+    elif user_percentile <= 30:
+        roast = "🙃 You’re someone’s type, but it’s probably not your type."
+    elif user_percentile <= 50:
+        roast = "📉 You’re dating-app purgatory. Swipeable but forgettable."
+    elif user_percentile <= 70:
+        roast = "🎭 Mid-tier hottie with room for growth."
+    elif user_percentile <= 90:
+        roast = "🌟 Main character energy with ick management issues."
+    else:
+        roast = "🦄 A literal unicorn. They’re not ready for you."
+
+st.markdown(f"**{roast}**")
     st.markdown(f"**Your ideal partner is in the top {round(ideal_percentile * 100, 2)}% rarity.**")
     st.markdown(f"**Your chance of meeting them in a year: `{P_percent}%`** 🎯")
 
