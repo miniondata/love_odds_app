@@ -34,7 +34,7 @@ col1, col2 = st.columns([2, 1])
 with col1:
     ideal_income = st.number_input("Partner's annual income (USD) is at least", min_value=10000, step=1000, value=60000, format="%d")
 with col2:
-    st.markdown(f"**${your_income:,}**")
+    st.markdown(f"**${ideal_income:,}**")
 
 ideal_fitness = st.slider("Workouts per week", 0, 7, 3)
 ideal_edu = st.selectbox("Education level", ["High school", "Bachelor's", "Graduate"])
