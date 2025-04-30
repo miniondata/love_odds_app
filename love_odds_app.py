@@ -170,7 +170,7 @@ if st.button("💘 Calculate My Love Odds"):
 
     if P_adjusted > 0:
         expected_people = int(1 / (ideal_percentile * compatibility_factor))
-        st.markdown(f"👻 That means if you ghost roughly `{expected_people}`** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
+        st.markdown(f"👻 That means if you ghost roughly `{expected_people}` people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
     
     if true_rank >= 90:
         st.markdown("💅 Tip: You’re perfect, baby. Manifest harder or raise your standards — you've earned it ✨")
@@ -181,18 +181,19 @@ if st.button("💘 Calculate My Love Odds"):
         st.markdown(f"📈 Tip: You’re close! Improving just one trait — maybe {weakest} — could push you over the edge.")
     else:
         if monthly_meet < 50:
-            new_meet = min(monthly_meet + 10, 50)
+            increase_by = min(10, 50 - monthly_meet)
+            new_meet = monthly_meet + increase_by
             new_n = new_meet * 12
             new_odds = 1 - (1 - ideal_percentile) ** new_n
             new_adjusted = round((new_odds * 100) * compatibility_factor, 2)
-            st.markdown(f"🧠 Tip: Increase your monthly interactions from {monthly_meet} to {new_meet} and your odds could improve to `{new_adjusted:.2f}%`.")
+            st.markdown(f"🧠 Tip: If you increase your monthly interactions from {monthly_meet} to {new_meet}, your odds could improve to `{new_adjusted:.2f}%`.")
         else:
             st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
 
     st.markdown("---")
-    if P_percent > 50:
+    if P_adjusted > 70:
         st.success("💘 Conclusion: You're either a hot commodity or just realistic. Keep going, Cupid!")
-    elif P_percent > 20:
+    elif P_adjusted > 30:
         st.info("🧐 Conclusion: You're choosy, but not delulu.")
     else:
         st.warning("😵‍💫 Conclusion: Babe... your standards are giving ✨fictional character✨.")
