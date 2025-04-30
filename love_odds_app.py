@@ -171,7 +171,22 @@ if st.button("💘 Calculate My Love Odds"):
     if P_adjusted > 0:
         expected_people = int(1 / (ideal_percentile * compatibility_factor))
         st.markdown(f"👻 That means if you ghost roughly `{expected_people}` people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
-    
+
+    st.markdown("---")
+    # 💘 Final Conclusion
+    your_rank = 100 - user_percentile
+    partner_rank = 100 - (ideal_percentile * 100)
+
+    if abs(your_rank - partner_rank) <= 15 and P_adjusted >= 20:
+        st.success("💘 Conclusion: You're dreaming at your level. Statistically, this could work 💌")
+    elif P_adjusted > 70:
+        st.success("💘 Conclusion: You're either a hot commodity or just realistic. Keep going, Cupid!")
+    elif P_adjusted > 30:
+        st.info("🧐 Conclusion: You're choosy, but not delulu.")
+    else:
+        st.warning("😵‍💫 Conclusion: Babe... your standards are giving ✨fictional character✨.")
+
+    # 🧠 THEN Tip logic
     if true_rank >= 90:
         st.markdown("💅 You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
     elif P_adjusted >= 90:
@@ -189,18 +204,3 @@ if st.button("💘 Calculate My Love Odds"):
             st.markdown(f"🧠 Tip: If you increase your yearly interactions from {yearly_meet} to {new_meet}, your odds could improve to `{new_adjusted:.2f}%`.")
         else:
             st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
-
-    st.markdown("---")
-    # 💘 Final Conclusion
-    ideal_rank = 100 - round(ideal_percentile * 100, 1)
-
-    if abs(true_rank - ideal_rank) <= 20 and P_adjusted >= 20:
-        st.success("💘 Conclusion: You and your ideal match are in the same dating league. This could actually work 💌")
-    elif P_adjusted > 70:
-        st.success("💘 Conclusion: You're either a hot commodity or just realistic. Keep going, Cupid!")
-    elif P_adjusted > 30:
-        st.info("🧐 Conclusion: You're choosy, but not delulu.")
-    else:
-        st.warning("😵‍💫 Conclusion: Babe... your standards are giving ✨fictional character✨.")
-
-
