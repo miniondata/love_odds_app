@@ -109,16 +109,16 @@ def make_user_prompt():
 
 def make_ideal_prompt():
     return f"""
-    Estimate how rare this ideal partner is in the US dating pool.
-
+    Estimate how rare this ideal partner is in the US dating pool. Focus on their most selective traits.
+    
     - Height at least: {ideal_height_ft}'{ideal_height_in}"
     - Income at least: ${ideal_income}
     - Fitness: {ideal_fitness} workouts/week
     - Education: {ideal_edu}
-    - Animal lover: {ideal_animals}
+    - Loves animals: {ideal_animals}
     - Has kids: {ideal_kids}
-    - Attractiveness: {ideal_attractiveness}/10
-    - MBTI: {ideal_mbti}
+    - Attractiveness (1-10): {ideal_attractiveness}
+    - MBTI: {ideal_mbti or 'Not specified'}
 
     Respond with a percentile score (0.1–100) — lower = rarer.
     """
