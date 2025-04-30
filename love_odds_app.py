@@ -146,6 +146,10 @@ if st.button("💘 Calculate My Love Odds"):
     st.success("🎯 Results Are In! Let’s see how delulu you are...")
     st.markdown(f"**You're in the top {user_percentile}% of daters.**")
     true_rank = round(100 - user_percentile, 1)
+
+    # Compatibility factor: the better you are, the higher your chances actually are
+    compatibility_factor = 1 - (true_rank / 100)
+    P_adjusted = round(P_percent * compatibility_factor, 2)
     
     if true_rank >= 90:
         roast = "🦄 A literal unicorn. They’re not ready for you."
@@ -162,26 +166,29 @@ if st.button("💘 Calculate My Love Odds"):
 
     st.markdown(f"**{roast}**")
     st.markdown(f"**Your ideal partner is in the top {round(ideal_percentile * 100, 2)}% rarity.**")
-    st.markdown(f"**Your chance of meeting them in a year: `{P_percent}%`** 🎯")
+    st.markdown(f"**Your chance of meeting them in a year: `{P_adjusted}%`** 🎯")
 
-    if P_percent > 0:
+    if P_adjusted > 0:
         expected_people = int(1 / ideal_percentile)
         st.markdown(f"💡 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
 
-    if P_percent < 70:
+    if P_adjusted < 70:
         if monthly_meet < 50:
             new_meet = min(monthly_meet + 10, 50)
             new_n = new_meet * 12
             new_odds = 1 - (1 - ideal_percentile) ** new_n
-            st.markdown(f"🧠 Tip: If you increased your monthly interactions from {monthly_meet} to {new_meet}, your odds could improve to about `{round(new_odds * 100, 2)}%`. Just saying.")
+            new_adjusted = round((new_odds * 100) * compatibility_factor, 2)
+            st.markdown(f"🧠 Tip: If you increased your monthly interactions from {monthly_meet} to {new_meet}, your odds could improve to about `{new_adjusted}%`. Just saying.")
         else:
-            st.markdown("🧠 Tip: You’re meeting plenty of people — maybe it's time to expand your type just a little?")
-    elif P_percent < 90:
-        weakest = "something you’re not listing"  # 👈 Optional: use scoring breakdown if you want specifics
+            st.markdown("🧠 Tip: You’re already meeting a lot of people — maybe it's time to expand your type just a little?")
+    elif P_adjusted < 90:
+        weakest = "something you're not listing"  # or make it smarter
         st.markdown(f"📈 Tip: You’re close! Just improving one area — maybe {weakest} — could make a difference.")
     else:
-        st.markdown("💅 Tip: You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
-
+        if true_rank <= 10:
+            st.markdown("💅 Tip: You’re perfect, baby. Manifest harder or be pickier, your call 💋")
+        else:
+            st.markdown("🫣 Tip: Math says you’ll find them. Reality might still swipe left.")
 
     st.markdown("---")
     if P_percent > 50:
