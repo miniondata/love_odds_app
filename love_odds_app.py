@@ -140,6 +140,7 @@ if st.button("💘 Calculate My Love Odds"):
             # 🎯 Results
             st.success("🎯 Results Are In! Let’s see how delulu you are...")
 
+            st.markdown(f"**You're in the top {round(user_percentile, 1)}% of daters.**")
             st.markdown(f"**Your ideal partner is in the top {round(ideal_percentile * 100, 2)}% rarity.**")
             st.markdown(f"**Your chance of meeting them in a year: `{P_percent}%`** 🎯")
 
