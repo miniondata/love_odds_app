@@ -30,13 +30,19 @@ with col1:
 with col2:
     ideal_height_inch = st.selectbox("Inches", list(range(0, 12)), index=6, key="ideal_in")
 
-ideal_income = st.slider("Partner's income must be at least (USD)", 20000, 1000000, 100000, step=10000)
-st.markdown(f"💰 Target partner income: **${ideal_income:,}**")
+ideal_income = st.number_input(
+    "Partner's income must be above (USD)", 
+    min_value=20000, 
+    max_value=1000000, 
+    step=10000, 
+    value=100000, 
+    format="%d"
+)
 
 ideal_fitness = st.slider("Workouts per week", 0, 7, 3)
 ideal_edu = st.selectbox("Education level", ["High school", "Bachelor's", "Graduate"])
 ideal_animals = st.radio("Animal lover?", ["Yes", "No", "Whatever"])
-ideal_kids = st.radio("Do they have kids?", ["Yes", "No", "No and don't want kids"])
+ideal_kids = st.radio("Do they have kids?", ["Yes", "No"])
 ideal_attractiveness = st.slider("How attractive should they be? (1 = meh, 10 = model)", 1, 10, 7)
 ideal_mbti = st.text_input("MBTI (e.g. ENFP)", max_chars=4)
 st.markdown("[🧠 Not sure about MBTI? Explore types here](https://www.16personalities.com/personality-types)")
@@ -56,13 +62,18 @@ with col3:
 with col4:
     your_height_inch = st.selectbox("Inches", list(range(0, 12)), index=6, key="you_in")
 
-your_income = st.number_input("Your income (USD per year)", min_value=10000, step=1000, value=60000, format="%d")
-st.markdown(f"💸 Your income: **${your_income:,}**")
+your_income = st.number_input(
+    "Your income (USD per year)", 
+    min_value=10000, 
+    step=1000, 
+    value=60000, 
+    format="%d"
+)
 
 your_fitness = st.slider("Your workouts per week", 0, 7, 2)
 your_edu = st.selectbox("Your education", ["High school", "Bachelor's", "Graduate"])
 your_animals = st.radio("Do you love animals?", ["Yes", "No", "Whatever"])
-your_kids = st.radio("Do you have kids?", ["Yes", "No", "No and don't want kids"])
+your_kids = st.radio("Do you have kids?", ["Yes", "No"])
 
 # State list
 us_states = sorted(list(tier_1_states | tier_2_states | {
