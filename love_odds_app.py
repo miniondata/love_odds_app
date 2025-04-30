@@ -126,7 +126,7 @@ if st.button("💘 Calculate My Love Odds"):
             P = 1 - (1 - ideal_percentile / 100) ** yearly_meet
             P_adjusted = round(P * 100 * compatibility, 2)
 
-            st.success("🎯 Results Are In! Let’s see how delulu you are...")
+            st.success("🎯 Results are In! Let’s see how delulu you are...")
             st.markdown(f"**You're in the top `{round(user_percentile, 1)}%` of daters.**")
 
             if your_rank >= 90:
@@ -190,7 +190,7 @@ if st.button("💘 Calculate My Love Odds"):
                     new_P_adj = round(new_P * 100 * compatibility, 2)
                     diff = round(new_P_adj - P_adjusted, 2)
             
-                    if diff > 1:
+                    if diff > 0.5:
                         st.markdown(
                             f"🧠 Try increasing your yearly interactions from {yearly_meet} to {new_meet} — "
                             f"your odds could improve to `{new_P_adj:.2f}%`, a `{diff}%` boost."
@@ -199,11 +199,11 @@ if st.button("💘 Calculate My Love Odds"):
                         new_ghosts = max(1, int(100 / new_P_adj))
                         if new_ghosts < old_ghosts:
                             st.markdown(
-                                f"👻 Bonus: That might mean ghosting `{new_ghosts}` people instead of `{old_ghosts}`. "
-                                f"Swipe smart, not just often 🫡"
+                                f"👻 Bonus: You might only have to ghost `{new_ghosts}` people instead of `{old_ghosts}`. "
+                                f"That’s a win in our books 🫡"
                             )
                     else:
-                        st.markdown("🧠 You're doing your part. Now it’s on fate (or the algorithm) to deliver 💌")
+                        st.markdown("🧠 Your odds aren't budging much even with more effort. Might be time to rethink those unicorn filters 🦄")
                 else:
                     st.markdown("🧠 You’re already meeting plenty of people — maybe it’s your filters that need the adjustment 💀")
         
