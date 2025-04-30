@@ -192,11 +192,14 @@ if st.button("💘 Calculate My Love Odds"):
     # 🧠 THEN Tip logic
     if true_rank >= 90:
         st.markdown("💅 You’re perfect, baby. Maybe your standards are the one needing a glow-up 👀")
+    
     elif P_adjusted >= 90:
         st.markdown("🫣 Tip: The math says yes. The vibes say... swipe wisely.")
+    
     elif P_adjusted >= 50:
         weakest = "something you’re not listing"
         st.markdown(f"📈 Tip: You’re close! Improving just one trait — maybe {weakest} — could push you over the edge.")
+    
     else:
         if yearly_meet < 20:
             increase_by = min(5, 20 - yearly_meet)
@@ -204,6 +207,21 @@ if st.button("💘 Calculate My Love Odds"):
             new_n = new_meet
             new_P = 1 - (1 - ideal_percentile) ** new_n
             new_adjusted = round((new_P * 100 * true_rank / 100), 2)
-            st.markdown(f"🧠 Tip: If you increase your yearly interactions from {yearly_meet} to {new_meet}, your odds could improve to `{new_adjusted:.2f}%`.")
+            improvement = round(new_adjusted - P_adjusted, 2)
+            percent_boost = round((improvement / P_adjusted) * 100, 1) if P_adjusted > 0 else 0
+    
+            if improvement >= 1:
+                st.markdown(f"🧠 Tip: If you increase your yearly interactions from {yearly_meet} to {new_meet}, your odds could improve to `{new_adjusted:.2f}%` — that’s a `{percent_boost}%` boost!")
+                
+                # 👻 Optional Ghosting Reduction
+                old_ghosts = max(1, int(100 / P_adjusted))
+                new_ghosts = max(1, int(100 / new_adjusted))
+                ghost_diff = old_ghosts - new_ghosts
+                if ghost_diff >= 1:
+                    st.markdown(f"👻 Bonus: You might only have to ghost `{new_ghosts}` people instead of `{old_ghosts}`. Progress 🫡")
+    
+            else:
+                st.markdown("🧠 Tip: You're doing your part. Now it’s on fate (or the algorithm) to deliver 💌")
+    
         else:
             st.markdown("🧠 Tip: You’re already meeting enough people — maybe your standards are bottlenecking the fantasy 💀")
