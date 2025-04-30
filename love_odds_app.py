@@ -170,7 +170,7 @@ if st.button("💘 Calculate My Love Odds"):
 
     if P_adjusted > 0:
         expected_people = int(1 / (ideal_percentile * compatibility_factor))
-        st.markdown(f"💡 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
+        st.markdown(f"👻 That means if you ghost roughly **{expected_people}** people this year — one of them might actually be Prince/ss Charming, not just another situationship 💁‍♀️")
     
     if P_adjusted < 70:
         if monthly_meet < 50:
@@ -183,7 +183,7 @@ if st.button("💘 Calculate My Love Odds"):
             st.markdown("🧠 Tip: You’re already meeting a lot of people — maybe it's time to expand your type just a little?")
     elif P_adjusted < 90:
         weakest = "something you're not listing"  # or make it smarter
-        st.markdown(f"📈 Tip: You’re close! Just improving one area — maybe {weakest} — could make a difference.")
+        st.markdown(f"💡 Tip: You’re close! Just improving one area — maybe {weakest} — could make a difference.")
     else:
         if true_rank <= 10:
             st.markdown("💅 Tip: You’re perfect, baby. Manifest harder or be pickier, your call 💋")
