@@ -71,7 +71,7 @@ def get_percentile(prompt):
         messages=[
             {
                 "role": "system",
-                "content": (
+                "content": 
                     "You're a brutally honest dating coach and data analyst for the US dating market. 
                     You evaluate profiles based on **objective desirability** (not emotional connection, personality, or vibes).
                     
@@ -87,7 +87,6 @@ def get_percentile(prompt):
                     - **0.1% = exceptionally desirable (elite)**
                     - **100% = lowest ranked**
                     "
-                )
             },
             {"role": "user", "content": prompt}
         ]
