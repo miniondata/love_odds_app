@@ -24,7 +24,6 @@ ideal_locations = st.text_input("Preferred locations (US only)", placeholder="e.
 ideal_attractiveness = st.slider("How attractive should they be? (1 = meh, 10 = model)", 1, 10, 7)
 ideal_mbti = st.text_input("MBTI (e.g. ENFP)", max_chars=4)
 st.markdown("[🧠 Not sure about MBTI? Explore types here](https://www.16personalities.com/personality-types)")
-st.markdown("MBTI is made up of 4 elements. For each one, choose one of the two: **(I/E)** Introvert or Extrovert, **(S/N)** Sensing or Intuition, **(T/F)** Thinking or Feeling, **(P/J)** Perceiving or Judging.")
 
 # -------------------- User Input --------------------
 st.divider()
@@ -41,9 +40,9 @@ your_edu = st.selectbox("Your education", ["High school", "Bachelor's", "Graduat
 your_animals = st.radio("Do you love animals?", ["Yes", "No", "Whatever"])
 your_kids = st.radio("Do you have kids?", ["Yes", "No", "No and don't want kids"])
 your_city = st.text_input("Your city (must be within the US)", placeholder="e.g. Austin")
+your_attractiveness = st.slider("How attractive are you? (1 = troll, 10 = hot hot hot)", 1, 10, 6)
 your_mbti = st.text_input("Your MBTI", max_chars=4)
 st.markdown("[💡 Explore MBTI types](https://www.16personalities.com/personality-types)")
-st.markdown("MBTI is made up of 4 elements. For each one, choose one of the two: **(I/E)** Introvert or Extrovert, **(S/N)** Sensing or Intuition, **(T/F)** Thinking or Feeling, **(P/J)** Perceiving or Judging.")
 
 monthly_meet = st.slider("How many people are you willing to meet per month?", 0, 100, 5)
 
@@ -59,7 +58,7 @@ if st.button("💘 Calculate My Love Odds"):
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are a brutally honest, data-driven dating analyst. You are not here to be nice. Rank users strictly based on US dating market value, factoring height, income, fitness, and education. Do NOT overvalue emotional or rare personality traits. Respond only based on real-world attractiveness and desirability statistics in the US."
+                        "content": "You're a brutally honest, data-driven dating analyst. Your job is to evaluate how objectively datable someone is in the US market based on height, income, education, fitness, job prestige, and physical attractiveness. Do NOT flatter or overvalue rare personality traits. Be realistic, no sugarcoating. This is for statistical accuracy, not feelings."
                     },
                     {"role": "user", "content": prompt}
                 ]
@@ -98,14 +97,15 @@ if st.button("💘 Calculate My Love Odds"):
         Traits:
         - Gender/Preference: {your_gender}, attracted to {your_attraction}
         - Age: {your_age}
-        - Job: {your_job}
+        - Job: {your_job} (assess for prestige and income security)
         - Height: {your_height}
         - Income: {your_income}
         - Fitness: {your_fitness} workouts/week
         - Education: {your_edu}
+        - City: {your_city} (assess dating pool size)
+        - Physical attractiveness rating (self-reported): {your_attractiveness}/10
         - Animal lover: {your_animals}
         - Has kids: {your_kids}
-        - City: {your_city} (within the US)
         - MBTI: {your_mbti}
         """
 
@@ -133,9 +133,6 @@ if st.button("💘 Calculate My Love Odds"):
                 new_n = new_meet * 12
                 new_odds = 1 - (1 - ideal_percentile) ** new_n
                 st.markdown(f"🧠 Tip: If you increased your monthly interactions from {monthly_meet} to {new_meet}, your odds could improve to about `{round(new_odds * 100, 2)}%`. Just saying.")
-
-            if ideal_percentile < 0.005:
-                st.markdown("📉 Your standards are elite. Consider widening your ideal criteria just a tiny bit to increase your odds!")
 
             # 🥲 Final Funny Summary
             st.markdown("---")
