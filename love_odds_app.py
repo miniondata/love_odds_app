@@ -165,32 +165,45 @@ if st.button("💘 Calculate My Love Odds"):
 
             # 🧠 Tips
             st.markdown("---")
-            if true_rank >= 90:
+            
+            # 🦄 You're amazing, but your standard is too low
+            if true_rank >= 90 and ideal_percentile >30:
                 st.markdown("💅 You're perfect. Maybe it’s your standards that need a glow-up 👀")
+            
+            # 🎯 Very high success odds
             elif P_adjusted >= 90:
                 st.markdown("🫣 The math says yes. The vibes say... swipe wisely.")
+            
+            # 💭 Your ideal is a statistical myth
+            elif ideal_percentile < 1 and P_adjusted < 5:
+                st.markdown("🧚‍♂️ Your dream match is rarer than a unicorn. You're not the problem — your fantasy might be 🪞")
+            
+            # 📈 Mid-level odds: polish one trait
             elif P_adjusted >= 50:
                 st.markdown("📈 You're close! Just polish one thing — maybe income, looks, or vibes — and you're golden.")
+            
+            # 🧠 Low odds — suggest meeting more people
             else:
                 if yearly_meet < 20:
                     new_meet = min(20, yearly_meet + 5)
                     new_P = 1 - (1 - ideal_percentile / 100) ** new_meet
                     new_P_adj = round(new_P * 100 * compatibility, 2)
                     diff = round(new_P_adj - P_adjusted, 2)
-
+            
                     if diff > 1:
                         st.markdown(
-                            f"🧠 If you increased your yearly interactions from {yearly_meet} to {new_meet}, "
-                            f"your odds could improve to `{new_P_adj:.2f}%` — that’s +{diff}%!"
+                            f"🧠 Try increasing your yearly interactions from {yearly_meet} to {new_meet} — "
+                            f"your odds could improve to `{new_P_adj:.2f}%`, a `{diff}%` boost."
                         )
                         old_ghosts = max(1, int(100 / P_adjusted))
                         new_ghosts = max(1, int(100 / new_P_adj))
                         if new_ghosts < old_ghosts:
                             st.markdown(
-                                f"👻 Bonus: You might only have to ghost `{new_ghosts}` people instead of `{old_ghosts}`. "
-                                f"Progress 🫡"
+                                f"👻 Bonus: That might mean ghosting `{new_ghosts}` people instead of `{old_ghosts}`. "
+                                f"Swipe smart, not just often 🫡"
                             )
                     else:
                         st.markdown("🧠 You're doing your part. Now it’s on fate (or the algorithm) to deliver 💌")
                 else:
                     st.markdown("🧠 You’re already meeting plenty of people — maybe it’s your filters that need the adjustment 💀")
+        
