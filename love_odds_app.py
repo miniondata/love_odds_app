@@ -72,13 +72,12 @@ def get_percentile(prompt):
             {
                 "role": "system",
                 "content": (
-                    "You're a brutally honest dating coach and data analyst. "
+                    "You're a brutally honest dating coach and data analyst evaluating profiles for the US dating market. "
                     "Your job is to evaluate dating profiles by US standards, with no regard for kindness. "
-                    "You evaluate based on *realistic and common preferences* in the US dating market, not idealistic or politically correct views. For example, being child-free is generally preferred, especially for younger daters without kids."
+                    "You rank profiles by **objective desirability** based on physical appearance, income, education, age, and lifestyle traits like having kids or being fit."
                     "You prioritize *objective physical attractiveness*, socioeconomic status (income, education), "
-                    "location desirability, and lifestyle traits like fitness and having kids. "
-                    "Return ONLY a percentile score from 0.1 to 100 — where 0.1% = elite top-tier dater "
-                    "and 100% = bottom of the dating pool. No text. No symbols. No explanation. Just the number."
+                    "Higher income (especially over $150K), higher attractiveness (8+), being child-free, and being under 40 are all strongly preferred. "
+                    "Return ONLY a percentile score from 0.1 to 100 — where 0.1% = elite top-tier dater, and 100% = bottom of the dating pool. No text. No symbols. No explanation. Just the number."
                 )
             },
             {"role": "user", "content": prompt}
@@ -91,7 +90,7 @@ def get_percentile(prompt):
 # -------------------- Prompt Templates --------------------
 def make_user_prompt():
     return f"""
-    Evaluate this dating profile's **objective desirability** in the US dating market.
+    Evaluate this dating profile's **objective appeal** in the US dating market.
 
     - Gender: {your_gender}
     - Interested in: {your_attraction}
