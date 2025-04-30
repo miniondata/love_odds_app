@@ -76,8 +76,7 @@ def get_percentile(prompt):
                     f"You're a brutally honest but fair dating coach and analyst. {profile_context} "
                     "You analyze dating appeal using common US dating preferences, including attractiveness, income, fitness, personality, and lifestyle compatibility. "
                     "Score based on how desirable this person would be to the average dater, where 0.1 = most desirable and 100 = least. "
-                    "Return ONLY a number between 0.1 and 100 — no text, no symbols, no explanation."
-
+                    "Return ONLY a percentile score between 0.1 and 100, where a **lower score means more desirable**. No symbols, no extra words."
                 )
             },
             {"role": "user", "content": prompt}
