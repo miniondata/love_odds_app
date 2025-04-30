@@ -83,7 +83,7 @@ def estimate_user_percentile():
 
     score += your_attractiveness - 5
     score = max(0, min(score, 15))
-    return round((score / 15) * 100, 1)
+    return round(100 - (score / 15 * 100), 1)
 
 # -------------------- Result --------------------
 if st.button("💘 Calculate My Love Odds"):
